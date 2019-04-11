@@ -1,0 +1,70 @@
+/********************************/
+/*******//*   M4TT   *//*********/
+/********************************/
+/****  ALL RIGHTS RESERVED  *****/
+/********************************/
+
+
+/********************************/
+/*  Resets default browser CSS  */
+/********************************/
+
+html {
+    -webkit-backface-visibility: hidden; 
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden; /* defines whether or not the back face of an element should be visible when facing the user */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%; /* gives you better control of the font size when the first selected font is not available */
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box; /* defines how the width and height of an element are calculated: should they include padding and borders, or not */
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    line-height: 1.5; /* specifies the height of a line */
+    
+}
+
+p, h1, h2, h3, h4, h5, h6{
+    font-weight: 400;
+    margin: 0;
+}
+
+nav, div, main, dl{
+    display: block;
+}
+
+h1 {
+    font-size:2rem
+}
+
+h2 {
+    font-size:1.84rem
+}
+
+h3 {
+    font-size:1.6rem
+}
+
+h4 {
+    font-size:1.52rem
+}
+
+h5 {
+    font-size:1.36rem
+}
+
+h6 {
+    font-size:1.20rem
+}
+
+/********************************/
+/********************************/

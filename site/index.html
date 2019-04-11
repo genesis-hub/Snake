@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="../images/icon/icon.png" type="image/x-icon">
+    <link rel="stylesheet" href="../css-reset/reset.css"> 
+    <link rel="stylesheet" href="../css-style/style.css"> 
+    <script defer src="../javascript/snakeCore.js"></script>
+    <title>Snake - JS</title>   
+</head>
+<body>
+    <div id="wrapper">
+        <canvas id="gameCanvas"></canvas>
+        <div id="game_background"></div>
+        <div id="game_create">
+            <div id="game_stop"></div>
+            <div id="game_guide">
+                <h1>SNAKE GAME</h1>
+                <span id="game_guide__startstop">To start or stop the game, press the spacebar.</span>
+                <span id="game_guide__startstop">Use the arrow keys to control the snake.</span>
+            </div>
+            <div id="game_stats">
+                <h1>Stats:</h1>
+                <dl id="game_stats__list">
+                    <dt>Speed: <span id="list_speed">[.....]</span></dt>
+                    <dt>Score: <span id="list_score">[.....]</span></dt>
+                    <dt>Lenght: <span id="list_length">[.....]</span></dt>
+                </dl>
+            </div>
+        </div>
+       
+    </div>
+</body>
+</html>

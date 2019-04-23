@@ -5,37 +5,35 @@ var _SNAKE = (function(snk){
 
         var key = e.keyCode;
         var calc;
-
+        snk.updatePositions.current();
         if (key == 32 && snk.data.gameStatus == false) {
             console.log("%cGame Started", "color: blue; font-size: 15px");
             snk.UI.hideBg();
             snk.UI.toggleUi();
-            snk.data.gameStatus = true;
             snk.changeGameStatus();
+
         } else if (key == 32 && snk.data.gameStatus == true) {
-             snk.data.gameStatus = false;
             console.log("%cGame Stopped", "color: crimson; font-size: 15px");
             snk.UI.toggleUi();
-            // gameBackground.style.opacity = ;
-            //gameGuide.style.opacity = 0.8;
-            // window.cancelAnimationFrame(initSnake);
-            //animate stop ???
+            snk.changeGameStatus();
+            return;
         };
 
-        
+        //check if you can change direction 
+    
         if (snk.data.currentDirection == 'left' || snk.data.currentDirection == 'right') {
-            calc = Math.abs(previousPosition_X - updatePosition_X);
+            calc = Math.abs(snk.data.position.previous.x - snk.data.position.current.x);
         } else {
-            calc = Math.abs(previousPosition_Y - updatePosition_Y)
+            calc = Math.abs(snk.data.position.previous.y - snk.data.position.current.y)
         };
         
         if (calc >= 20) {
-            console.log(`${calc}`)
+            console.log(calc);
             // change direction of snake
             switch (key) {
                 case 37: // left
                     if (snk.data.currentDirection !== 'right' && snk.data.currentDirection !== 'left') {
-                        previousPosition_X = snake[0].x;
+                        snk.data.position.previous.x = snake[0].x;
                         directionOfMovment_vertical = 0;
                         directionOfMovment_horizontal = -snakeVelocity;
                         snk.data.currentDirection = 'left';
@@ -44,7 +42,7 @@ var _SNAKE = (function(snk){
 
                 case 38: // up
                     if (snk.data.currentDirection !== 'down' && snk.data.currentDirection !== 'up') {
-                        previousPosition_Y = snake[0].y;
+                        snk.data.position.previous.y = snake[0].y;
                         directionOfMovment_vertical = -snakeVelocity;
                         directionOfMovment_horizontal = 0;
                         snk.data.currentDirection = 'up';
@@ -54,7 +52,7 @@ var _SNAKE = (function(snk){
                 case 39: // right
                     if (snk.data.currentDirection !== 'left' && snk.data.currentDirection !== 'right') {
 
-                        previousPosition_X = snake[0].x;
+                        snk.data.position.previous.x = snake[0].x;
                         directionOfMovment_vertical = 0;
                         directionOfMovment_horizontal = +snakeVelocity;
                         snk.data.currentDirection = 'right';
@@ -63,7 +61,7 @@ var _SNAKE = (function(snk){
 
                 case 40: // down
                     if (snk.data.currentDirection !== 'up' && snk.data.currentDirection !== 'down') {
-                        previousPosition_Y = snake[0].y;
+                        snk.data.position.previous.y = snake[0].y;
                         directionOfMovment_vertical = +snakeVelocity;
                         directionOfMovment_horizontal = 0;
                         snk.data.currentDirection = 'down';
@@ -75,7 +73,7 @@ var _SNAKE = (function(snk){
         } else {
             // TODO: add change direction with delay ?? HMM??
 
-        }
+        };
 
 
     },false);

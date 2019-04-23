@@ -24,11 +24,14 @@ var _SNAKE = (function(root, core ){
         canvasElem.height = window.innerHeight;
 
     var snakeDetails = {
+        borderColor: "#101010",
+        color: "#234564",
         width: 20,
         height: 20,
         velocity: 1,                                                                                                       
-        color: "#234564",
-        borderColor: "#101010",
+        score: null,
+        slength: null,
+        speeed: null,
     };
 
     var snakeTab = []; // hold snake parts
@@ -50,9 +53,7 @@ var _SNAKE = (function(root, core ){
             }
         },
         snakeParts: snakeTab,
-        score: null,
-        slength: null,
-        speeed: null,
+       
     };
 
     
@@ -75,7 +76,7 @@ var _SNAKE = (function(root, core ){
         return;
     }; //TODO: add "start button" to call function
     
-    console.log(core.data.gameStatus)
+    console.log(core.data.gameStatus);
      /* For each part of snake call function "drawSnakeFromPart" */
     function initSnake(){
         if(core.data.gameStatus == true){
@@ -90,11 +91,12 @@ var _SNAKE = (function(root, core ){
         // console.log(part)
         ctx.fillSyle = snakeDetails.color;
         ctx.strokeStyle = snakeDetails.borderColor;
-        ctx.fillRect(part.x += (core.data.directionHorizontal), part.y += (core.data.directionVertical), snakeDetails.width, snakeDetails.height);
-        ctx.strokeRect(part.x += (core.data.directionHorizontal), part.y += (core.data.directionVertical), snakeDetails.width, snakeDetails.height);
+        ctx.fillRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+        ctx.strokeRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
 
     };
 
+    // update positions
     core.updatePositions = {
         previous: function(){
             core.data.position.previous.x = snakeTab[0].x;
@@ -106,6 +108,7 @@ var _SNAKE = (function(root, core ){
         }
     };
     
+    // change game status
     core.changeGameStatus = function (){
         if(core.data.gameStatus == false) {
             core.data.gameStatus = true;
@@ -117,7 +120,8 @@ var _SNAKE = (function(root, core ){
         }
     };
 
-    core.checkDirection = function(calc){
+    //check if you can change direction 
+    core.directionChecker = function(calc){
         
         if (core.data.currentDirection == 'left' || core.data.currentDirection == 'right') {
             calc = Math.abs(core.data.position.previous.x - core.data.position.current.x);
@@ -125,10 +129,12 @@ var _SNAKE = (function(root, core ){
             calc = Math.abs(core.data.position.previous.y - core.data.position.current.y)
         };
         return calc;
+    };
+
+    core.updateDirection = function(x, y){
+        core.data.directionVertical = y;
+        core.data.directionHorizontal = -x;
     }
-
-  
-
 
     createSnake();
 

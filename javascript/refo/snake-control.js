@@ -42,7 +42,9 @@ var _SNAKE = (function(snk){
                 if(snk.data.directions.h !== 1 && snk.data.directions.h !== -1){
                     console.log('left') 
                     snk.data.position.previous.x = snk.data.snakeParts[0].x;
-                    snk.data.prevDirections.h = snk.data.directions.h;
+            
+                    // snk.targetDirection.push(snk.data.position.previous);
+                    // snk.data.prevDirections.h = snk.data.directions.h;
                     snk.data.directions.v = 0;
                     snk.data.directions.h = -1;  
                    
@@ -52,8 +54,11 @@ var _SNAKE = (function(snk){
             // up
             if(key == 38 || key == 87){
                 if(snk.data.directions.v !== 1 && snk.data.directions.v !== -1){  
+        
                     snk.updatePositions.previous();
-                    snk.data.prevDirections.h = snk.data.directions.h;
+                    // snk.targetDirection.push(snk.data.position.previous);
+                    // console.log(snk.targetDirection);
+                    // snk.data.prevDirections.h = snk.data.directions.h;
                     // snk.data.position.previous.y = snk.data.snakeParts[0].y;
                     // snk.data.position.previous.x = snk.data.snakeParts[0].x;
                     console.log('up')

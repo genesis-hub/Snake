@@ -1,6 +1,6 @@
 /* Snake Core */
 /* Copyright genesis-hub */
-var _SNAKE = (function(root, core ){
+var _SNAKE = (function(root, core, Q ){
     'use strict';
   
     console.log("%cSNAKE GAME 🐍", "color: green; font-size: 30px;");
@@ -14,7 +14,7 @@ var _SNAKE = (function(root, core ){
     // set interval
     var myAnimateReq;
     var myInerval,
-        interval = 50;
+        interval = 500;
 
     var getCenterPositions = {
         x: Math.round((window.innerWidth / 2) - 10), // -10 ? center of the square 
@@ -33,14 +33,14 @@ var _SNAKE = (function(root, core ){
         color: "#234564",
         width: 20,
         height: 20,
-        velocity: 1,                                                                                                       
+        velocity: 20,                                                                                                       
         score: null,
         slength: null,
         speeed: null,
     };
 
     var snakeTab = []; // hold snake parts
-    // var prevDirections = [];
+    var holdPrevPosition = [];
     // Snake data
     core.data = {
         directions: {
@@ -59,15 +59,14 @@ var _SNAKE = (function(root, core ){
             }
         },
         prevDirections: {
-            v: 0,
-            h: -1,
-        },   
+            
+        },  
         snakeParts: snakeTab,
         // testing 
         differenceDirection: null,
     };
 
-    
+    core.targetDirection = holdPrevPosition;
     
     
     function createSnake (x){
@@ -97,6 +96,7 @@ var _SNAKE = (function(root, core ){
 
     /* Display snake from part in canvas */
     function drawSnakeFromParts(part) {
+        
         // ctx.fillRect(part.x += (core.data.direction.h * snakeDetails.velocity), part.y += (core.data.directions.v * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
         // ctx.strokeRect(part.x += (core.data.direction.h * snakeDetails.velocity), part.y += (core.data.directions.v * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
     
@@ -107,43 +107,48 @@ var _SNAKE = (function(root, core ){
        
     };
 
+    // core.ad =  function(snakeTab){
+    //     snakeTab.forEach(function(part){
+    //         console.log('test');
+    //     // ctx.fillRect(part.x += (core.data.direction.h * snakeDetails.velocity), part.y += (core.data.directions.v * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+    //     // ctx.strokeRect(part.x += (core.data.direction.h * snakeDetails.velocity), part.y += (core.data.directions.v * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+    
+    //     ctx.fillStyle = snakeDetails.color;
+    //     ctx.strokeStyle = snakeDetails.borderColor;
+    //     ctx.fillRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
+    //     ctx.strokeRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
+       
+    //     })
+    
+    // }
 
     function changeCoordinatesOfParts(){
-
-
-        snakeTab.forEach(function(part){
-
-        });
         
-        if(core.data.directions.h == -1) {
-            console.log('aa')
-            
-            snakeTab.forEach(function(part){
-                // console.log(part);
-                console.log(core.data.prevDirections.h);
-                part.x += (core.data.prevDirections.h * snakeDetails.velocity);
-                
-            })
-        }
+        Q.copyDeep(snakeTab, holdPrevPosition);
+        console.log("Prev po:" + holdPrevPosition[0].x);
 
-        if(core.data.directions.v == -1){
-            snakeTab.forEach(function(part){
-                if(part.x > core.data.position.previous.x){
-                    part.x += (core.data.prevDirections.h * snakeDetails.velocity);
-                } else {
-                    part.y += (core.data.directions.v * snakeDetails.velocity);
-                }
-            })
+        snakeTab[0].x += (core.data.directions.h  * snakeDetails.width);
+        snakeTab[0].y += (core.data.directions.v  * snakeDetails.width);
+        console.log("Prev po:" + holdPrevPosition[0].x);
+        
+        for(var i = 1; i < snakeTab.length; i++){
+    
+            snakeTab[i] = holdPrevPosition[i-1] ;
         }
-      
+    
+        console.log("A P:" + snakeTab[0].x);
+
+        clearSnakePart();
     };
   
 
     function clearSnakePart(){
+      
         var len = snakeTab.length -1;
         var lastSnakePart = snakeTab[len];
         // console.log(lastSnakePart);
-        ctx.clearRect(lastSnakePart.x + 20, lastSnakePart.y, 1, snakeDetails.height)
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        // console.dir( holdPrevPosition);
     };
 
    
@@ -158,6 +163,7 @@ var _SNAKE = (function(root, core ){
     core.updatePositions = {
 
         previous: function(){
+            
             core.data.position.previous.x = snakeTab[0].x;
             core.data.position.previous.y = snakeTab[0].y;
         },
@@ -200,16 +206,17 @@ var _SNAKE = (function(root, core ){
     // change snake volecity
     core.changeVelocity = function(x){
         snakeDetails.velocity += x;
+        
     };
 
 
 
     // invocation fun
-    createSnake(4);
+    createSnake(5);
 
     return core;
 
-})(this, _SNAKE || {});
+})(this, _SNAKE || {}, _Cube);
 
 
  

@@ -10,6 +10,8 @@ var _Cube = (function(root, cube) {
    
     /* Variables */
     var doc = document; // used for shorthand 
+    var toStr = Object.prototype.toString, // used for shorthand
+        astr = "[object Array]";// used to comparison
     // initiating function
     cube = function(select) {
         return new query(select);
@@ -41,6 +43,22 @@ var _Cube = (function(root, cube) {
         return this;
     };
 
+    cube.copyDeep = function(from, into){
+        var i; into = into || {};
+        for (i in from) {
+            if(from.hasOwnProperty(i)){
+                if(typeof from[i] === 'object'){
+                    // call [line:33]
+                    into[i] = (toStr.call(from[i]) === astr) ? [] : {};
+                   cube.copyDeep(from[i], into[i]);
+                } else {
+                    into[i] = from[i];
+                }    
+            }
+        }
+        return into;
+    },
+
     // wait for "DOM" when it will be safe to manipulate
     cube.ready = function(fn) {
         if (doc.readyState != 'loading'){ // modern browser
@@ -59,6 +77,9 @@ var _Cube = (function(root, cube) {
     query.prototype = cube.fn = {
 
         length: 0,
+
+        // copy methods and types of methods into object
+       
 
         /* css({display : "block"})
         // sets css style  */

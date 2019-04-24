@@ -1,3 +1,5 @@
+/* Snake Core */
+/* Copyright genesis-hub */
 var _SNAKE = (function(root, core ){
     'use strict';
   
@@ -28,7 +30,7 @@ var _SNAKE = (function(root, core ){
         color: "#234564",
         width: 20,
         height: 20,
-        velocity: 1,                                                                                                       
+        velocity: 0.1,                                                                                                       
         score: null,
         slength: null,
         speeed: null,
@@ -40,7 +42,7 @@ var _SNAKE = (function(root, core ){
     core.data = {
         currentDirection: 'left',
         directionVertical: 0,
-        directionHorizontal: -snakeDetails.velocity,
+        directionHorizontal: -1,
         gameStatus: false,
         position: {
             previous: {
@@ -57,8 +59,8 @@ var _SNAKE = (function(root, core ){
     };
 
     
-    function createSnake (){
-        var len = 5;
+    function createSnake (x){
+        var len = x;
         for (let i = 0; i < len; i++) {
             snakeTab.push({
                 x: getCenterPositions.x + (snakeDetails.width * i),
@@ -88,13 +90,19 @@ var _SNAKE = (function(root, core ){
 
     /* Display snake from part in canvas */
     var drawSnakeFromPart = function(part) {
-        // console.log(part)
         ctx.fillSyle = snakeDetails.color;
         ctx.strokeStyle = snakeDetails.borderColor;
         ctx.fillRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
         ctx.strokeRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
-
+        clearSnakePart();
     };
+
+    var clearSnakePart = function(){
+        var len = snakeTab.length -1;
+        var lastSnakePart = snakeTab[len];
+        console.log(lastSnakePart);
+        ctx.clearRect(lastSnakePart.x += (core.data.directionHorizontal * snakeDetails.velocity), snakeDetails.width, snakeDetails.height)
+    }
 
     // update positions
     core.updatePositions = {
@@ -121,7 +129,8 @@ var _SNAKE = (function(root, core ){
     };
 
     //check if you can change direction 
-    core.directionChecker = function(calc){
+    core.directionChecker = function(){
+        var calc;
         
         if (core.data.currentDirection == 'left' || core.data.currentDirection == 'right') {
             calc = Math.abs(core.data.position.previous.x - core.data.position.current.x);
@@ -131,12 +140,15 @@ var _SNAKE = (function(root, core ){
         return calc;
     };
 
-    core.updateDirection = function(x, y){
-        core.data.directionVertical = y;
-        core.data.directionHorizontal = -x;
-    }
+    // change snake volecity
+    core.changeVelocity = function(x){
+        snakeDetails.velocity += x;
+    };
 
-    createSnake();
+
+
+    // invocation fun
+    createSnake(2);
 
     return core;
 

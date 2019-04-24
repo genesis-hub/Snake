@@ -11,7 +11,10 @@ var _SNAKE = (function(root, core ){
         window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;    
 
+    // set interval
     var myAnimateReq;
+    var myInerval,
+        interval = 50;
 
     var getCenterPositions = {
         x: Math.round((window.innerWidth / 2) - 10), // -10 ? center of the square 
@@ -37,11 +40,13 @@ var _SNAKE = (function(root, core ){
     };
 
     var snakeTab = []; // hold snake parts
-
+    // var prevDirections = [];
     // Snake data
     core.data = {
-        directionVertical: 0,
-        directionHorizontal: -1,
+        directions: {
+            v: 0,
+            h: -1,
+        },
         gameStatus: false,
         position: {
             previous: {
@@ -53,10 +58,17 @@ var _SNAKE = (function(root, core ){
                 y: null
             }
         },
+        prevDirections: {
+            v: 0,
+            h: -1,
+        },   
         snakeParts: snakeTab,
-       
+        // testing 
+        differenceDirection: null,
     };
 
+    
+    
     
     function createSnake (x){
         var len = x;
@@ -66,13 +78,7 @@ var _SNAKE = (function(root, core ){
                 y: getCenterPositions.y
             });
         };
-        //   snakeTab.forEach(function (part) { // TODO: do zmiany
-        //     ctx.fillStyle = snakeDetails.color;
-        //     ctx.strokeStyle = snakeDetails.borderColor;
-        //     ctx.fillRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
-        //     ctx.strokeRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
-        // });
-        snakeTab.forEach(drawSnakeFromParts);// TODO: do zmiany
+        snakeTab.forEach(drawSnakeFromParts);
         core.updatePositions.previous();
         console.table(snakeTab);
         return;
@@ -82,7 +88,8 @@ var _SNAKE = (function(root, core ){
      /* For each part of snake call function "drawSnakeFromPart" */
     function initSnake(){
         if(core.data.gameStatus == true){
-            snakeTab.forEach(changeCoordinatesOfParts);
+            snakeTab.forEach(drawSnakeFromParts);
+            // changeCoordinatesOfParts(snakeTab);
             requestAnimationFrame(initSnake);
         }  
     };
@@ -90,10 +97,8 @@ var _SNAKE = (function(root, core ){
 
     /* Display snake from part in canvas */
     function drawSnakeFromParts(part) {
-        
-     
-        // ctx.fillRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
-        // ctx.strokeRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+        // ctx.fillRect(part.x += (core.data.direction.h * snakeDetails.velocity), part.y += (core.data.directions.v * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+        // ctx.strokeRect(part.x += (core.data.direction.h * snakeDetails.velocity), part.y += (core.data.directions.v * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
     
         ctx.fillStyle = snakeDetails.color;
         ctx.strokeStyle = snakeDetails.borderColor;
@@ -102,27 +107,37 @@ var _SNAKE = (function(root, core ){
        
     };
 
-    function changeCoordinatesOfParts(part){
-        // assumptions:
-        // if directions change update part corrdinates 
-        // one element moves in width or height, the next element takes its place
-        // hmm ?
-        if(core.data.currentDirection ){
 
-        }
-        if(core.data.directionHorizontal == -1 || core.data.directionHorizontal == 1 ){
-           
-        } else {
-            // part.y += (core.data.directionVertical * snakeDetails.velocity);
-        }
-        part.x += (core.data.directionHorizontal * snakeDetails.velocity);
-        part.y += (core.data.directionVertical * snakeDetails.velocity);
-        // part.x += (core.data.directionHorizontal * snakeDetails.velocity), 
-       
-        drawSnakeFromParts(part);
+    function changeCoordinatesOfParts(){
+
+
+        snakeTab.forEach(function(part){
+
+        });
         
+        if(core.data.directions.h == -1) {
+            console.log('aa')
+            
+            snakeTab.forEach(function(part){
+                // console.log(part);
+                console.log(core.data.prevDirections.h);
+                part.x += (core.data.prevDirections.h * snakeDetails.velocity);
+                
+            })
+        }
 
+        if(core.data.directions.v == -1){
+            snakeTab.forEach(function(part){
+                if(part.x > core.data.position.previous.x){
+                    part.x += (core.data.prevDirections.h * snakeDetails.velocity);
+                } else {
+                    part.y += (core.data.directions.v * snakeDetails.velocity);
+                }
+            })
+        }
+      
     };
+  
 
     function clearSnakePart(){
         var len = snakeTab.length -1;
@@ -141,6 +156,7 @@ var _SNAKE = (function(root, core ){
     
     // update positions
     core.updatePositions = {
+
         previous: function(){
             core.data.position.previous.x = snakeTab[0].x;
             core.data.position.previous.y = snakeTab[0].y;
@@ -156,18 +172,24 @@ var _SNAKE = (function(root, core ){
         if(core.data.gameStatus == false) {
             core.data.gameStatus = true;
             myAnimateReq = requestAnimationFrame(initSnake);
+            myInerval = setInterval(changeCoordinatesOfParts, interval);
         } else {
             core.data.gameStatus = false;
             cancelAnimationFrame(myAnimateReq);
+            clearInterval(myInerval);
             
         }
     };
 
     //check if you can change direction 
-    core.directionChecker = function(){
+    core.directionChecker = function(up){
         var calc;
-        
-        if (core.data.directionHorizontal == -1 || core.data.directionHorizontal  == 1) {
+        if (up == "updata"){
+            core.updatePositions.current();
+        }   
+         
+       
+        if (core.data.directions.h == -1 || core.data.directions.h  == 1) {
             calc = Math.abs(core.data.position.previous.x - core.data.position.current.x);
         } else {
             calc = Math.abs(core.data.position.previous.y - core.data.position.current.y)
@@ -188,3 +210,6 @@ var _SNAKE = (function(root, core ){
     return core;
 
 })(this, _SNAKE || {});
+
+
+ 

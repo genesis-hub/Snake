@@ -30,7 +30,7 @@ var _SNAKE = (function(root, core ){
         color: "#234564",
         width: 20,
         height: 20,
-        velocity: 0.1,                                                                                                       
+        velocity: 1,                                                                                                       
         score: null,
         slength: null,
         speeed: null,
@@ -40,7 +40,6 @@ var _SNAKE = (function(root, core ){
 
     // Snake data
     core.data = {
-        currentDirection: 'left',
         directionVertical: 0,
         directionHorizontal: -1,
         gameStatus: false,
@@ -67,12 +66,13 @@ var _SNAKE = (function(root, core ){
                 y: getCenterPositions.y
             });
         };
-        snakeTab.forEach(function (part) { // TODO: do zmiany
-            ctx.fillStyle = snakeDetails.color;
-            ctx.strokeStyle = snakeDetails.borderColor;
-            ctx.fillRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
-            ctx.strokeRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
-        });
+        //   snakeTab.forEach(function (part) { // TODO: do zmiany
+        //     ctx.fillStyle = snakeDetails.color;
+        //     ctx.strokeStyle = snakeDetails.borderColor;
+        //     ctx.fillRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
+        //     ctx.strokeRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
+        // });
+        snakeTab.forEach(drawSnakeFromParts);// TODO: do zmiany
         core.updatePositions.previous();
         console.table(snakeTab);
         return;
@@ -82,28 +82,63 @@ var _SNAKE = (function(root, core ){
      /* For each part of snake call function "drawSnakeFromPart" */
     function initSnake(){
         if(core.data.gameStatus == true){
-            snakeTab.forEach(drawSnakeFromPart);
+            snakeTab.forEach(changeCoordinatesOfParts);
             requestAnimationFrame(initSnake);
         }  
     };
-    
+     
 
     /* Display snake from part in canvas */
-    var drawSnakeFromPart = function(part) {
-        ctx.fillSyle = snakeDetails.color;
+    function drawSnakeFromParts(part) {
+        
+     
+        // ctx.fillRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+        // ctx.strokeRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
+    
+        ctx.fillStyle = snakeDetails.color;
         ctx.strokeStyle = snakeDetails.borderColor;
-        ctx.fillRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
-        ctx.strokeRect(part.x += (core.data.directionHorizontal * snakeDetails.velocity), part.y += (core.data.directionVertical * snakeDetails.velocity), snakeDetails.width, snakeDetails.height);
-        clearSnakePart();
+        ctx.fillRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
+        ctx.strokeRect(part.x, part.y, snakeDetails.width, snakeDetails.height);
+       
     };
 
-    var clearSnakePart = function(){
+    function changeCoordinatesOfParts(part){
+        // assumptions:
+        // if directions change update part corrdinates 
+        // one element moves in width or height, the next element takes its place
+        // hmm ?
+        if(core.data.currentDirection ){
+
+        }
+        if(core.data.directionHorizontal == -1 || core.data.directionHorizontal == 1 ){
+           
+        } else {
+            // part.y += (core.data.directionVertical * snakeDetails.velocity);
+        }
+        part.x += (core.data.directionHorizontal * snakeDetails.velocity);
+        part.y += (core.data.directionVertical * snakeDetails.velocity);
+        // part.x += (core.data.directionHorizontal * snakeDetails.velocity), 
+       
+        drawSnakeFromParts(part);
+        
+
+    };
+
+    function clearSnakePart(){
         var len = snakeTab.length -1;
         var lastSnakePart = snakeTab[len];
-        console.log(lastSnakePart);
-        ctx.clearRect(lastSnakePart.x += (core.data.directionHorizontal * snakeDetails.velocity), snakeDetails.width, snakeDetails.height)
-    }
+        // console.log(lastSnakePart);
+        ctx.clearRect(lastSnakePart.x + 20, lastSnakePart.y, 1, snakeDetails.height)
+    };
 
+   
+
+    var drawDirectionChanges = function(){
+        // assumptions:
+        // 
+    };
+
+    
     // update positions
     core.updatePositions = {
         previous: function(){
@@ -132,7 +167,7 @@ var _SNAKE = (function(root, core ){
     core.directionChecker = function(){
         var calc;
         
-        if (core.data.currentDirection == 'left' || core.data.currentDirection == 'right') {
+        if (core.data.directionHorizontal == -1 || core.data.directionHorizontal  == 1) {
             calc = Math.abs(core.data.position.previous.x - core.data.position.current.x);
         } else {
             calc = Math.abs(core.data.position.previous.y - core.data.position.current.y)
@@ -148,7 +183,7 @@ var _SNAKE = (function(root, core ){
 
 
     // invocation fun
-    createSnake(2);
+    createSnake(4);
 
     return core;
 

@@ -11,12 +11,3 @@ var _SNAKE = (function(snk, Q){
 
     return snk;
 })(_SNAKE || {}, _Cube);
-
-// var SNAKE = Q(function(snk){
-//      snk.UI = {
-//         hideUi: function(){
-//             Q("#game_guide").toggle();
-//         }
-//     }
-//     return snk;
-// });

@@ -93,12 +93,8 @@ var _Snake = (function (root, snake){
          /* For each part of snake call function "drawSnakeFromPart" */
         initSnake: function (){
             if(snake.data.gameStatus == true || snake.data.gameStatus == false){
-                // for(var i= 0; i < snakeTab.length; i++){
-                //     drawSnakeFromParts(holdPrevPosition[i])
-                // // }
+              
                 snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor);
-                // holdPrevPosition.forEach(drawSnakeFromParts);
-                   //  snake.drawFood(foodHolder, ctx,  snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.bordColor)
                
                 snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color);
                 requestAnimationFrame(snakeFunctionalities.initSnake);

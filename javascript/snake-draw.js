@@ -7,41 +7,44 @@ var _Snake = (function (root, snake){
     console.log(snake)
    
     var snakeDrawFunctions = {
-        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor) {
+        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor,space) {
            
 
             for(var i= 0; i < part.length-1; i++){ 
                 ctx.fillStyle =  color;
-                ctx.fillRect(part[i].x  , part[i].y  , width -5, height -5);
-                // ctx.strokeRect(part[i].x  , part[i].y  , width -5, height -5)
+                ctx.lineWidth = 1;
+                ctx.fillRect(part[i].x  , part[i].y  , width - space, height - space );
+                // ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
                 ctx.fillStyle = "crimson";
-                ctx.fillRect(part[0].x , part[0].y , width -5 , height -5 );
+                ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
+                // ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
                 
             }   
 
             for(var i = 0; i < part.length ; i++){
                 if( i > 1 && snake.data.snakeParts[i-2].x !== snake.data.snakeParts[i].x && snake.data.snakeParts[i-2].y !== snake.data.snakeParts[i].y){ 
                     ctx.fillStyle = color;
-                    ctx.fillRect(snake.data.snakeParts[i-1].x  , snake.data.snakeParts[i-1].y , width -5 , height -5 );
+                    ctx.fillRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
                 }
             } 
         
         },
 
-        drawFood: function(part, ctx, width, height, color, ){
+        drawFood: function(part, ctx, width, height, color, space ){
             ctx.fillStyle = color;
             // ctx.strokeStyle = bordColor;
-            ctx.fillRect(part[0].x , part[0].y , width -5, height -5);
+            ctx.lineWidth = 1;
+            ctx.fillRect(part[0].x , part[0].y , width - space  , height - space );
             // ctx.fillRect(part[0].x, part[0].y, 30, 30);
-            // ctx.stroke(part[0].x, part[0].y, width, height);
+              ctx.strokeRect(part[0].x, part[0].y, width -  space, height - space);
         },
 
-        drawMapBorder: function(ctx, width, height, color){
-            console.log(width)
+        drawMapBorder: function(ctx, width, height, borderColor, borderWidth){
+        
             // ctx.fillStyle = color;
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = color;
-            ctx.strokeRect(0 , 0, width , height );
+            ctx.lineWidth = borderWidth;
+            ctx.strokeStyle = borderColor;
+            ctx.strokeRect(0, 0, width   , height );
         }
 
 

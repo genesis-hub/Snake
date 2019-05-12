@@ -25,7 +25,7 @@ var _Snake = (function(snk){
        
         // check if you can change direction
         // snk.updatePositions.current();
-        var calc = snk.directionChecker('updata');
+        var calc = snk.directionChecker('update');
         
         //  h -1 left
         //  v -1 up
@@ -33,18 +33,15 @@ var _Snake = (function(snk){
         //  v 1 down
 
 
-        // console.log(calc);
         if (calc >= 20 && snk.data.gameStatus == true) {
-            // console.log(calc)
+           
             snk.differenceDirection = calc;
             // left
             if(key == 37 || key == 65){
                 if(snk.data.directions.h !== 1 && snk.data.directions.h !== -1){
-                    // console.log('left') 
-                    snk.data.position.previous.x = snk.data.snakeParts[0].x;
+                    snk.updatePositions.previous();
+                    // snk.data.position.previous.x = snk.data.snakeParts[0].x;
             
-                    // snk.targetDirection.push(snk.data.position.previous);
-                    snk.data.prevDirections.h = snk.data.directions.h;
                     snk.data.directions.v = 0;
                     snk.data.directions.h = -1;  
                    
@@ -54,14 +51,9 @@ var _Snake = (function(snk){
             // up
             if(key == 38 || key == 87){
                 if(snk.data.directions.v !== 1 && snk.data.directions.v !== -1){  
-        
                     snk.updatePositions.previous();
-                    // snk.targetDirection.push(snk.data.position.previous);
-                    // console.log(snk.targetDirection);
-                    snk.data.prevDirections.h = snk.data.directions.h;
                     // snk.data.position.previous.y = snk.data.snakeParts[0].y;
-                    // snk.data.position.previous.x = snk.data.snakeParts[0].x;
-                    // console.log('up')
+
                     snk.data.directions.v = -1;
                     snk.data.directions.h = 0;
                 }

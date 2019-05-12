@@ -5,7 +5,6 @@ var _Snake = (function (root, snake){
 
     'use strict';
     console.log("%cSNAKE GAME 🐍", "color: green; font-size: 30px;");
-    console.dir(snake);
 
     // add browser support
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -14,7 +13,7 @@ var _Snake = (function (root, snake){
     var toStr = Object.prototype.toString, // used for shorthand
         astr = "[object Array]";// used to comparison
   
-    var speedup = 1;
+    var speedup = 2;
     // set interval
     var myAnimateReq;
     var myInerval,
@@ -25,14 +24,8 @@ var _Snake = (function (root, snake){
     // set canvas to '2D'
     var ctx = canvasElem.getContext('2d');
         //set cavas height and width
-        canvasElem.width = 960;
-        canvasElem.height = 660;
-
-    var getCenterPositions = {
-        x: Math.round((canvasElem.width / 2) ), // -10 ? center of the square 
-        y: Math.round((canvasElem.height / 2) ), // -10 ? center of the square 
-    }; //TODO: add event when window change height or width and overwrite getCenterPositions;
-        console.log(getCenterPositions);
+        canvasElem.width = 1000;
+        canvasElem.height = 700;
 
     // snake details like color, width, height
     var snakeDetails = {
@@ -43,23 +36,33 @@ var _Snake = (function (root, snake){
         velocity: 0,
         score: null,
         length: 5,
-        speeed: null,
+        speeed: 0,
+        spaceBetweenParts: 6,
     };
 
     var foodDetails = {
         width: 30,
         height: 30,
         color: 'crimson',
+    }
 
+    var canvasMap = {
+        borderWidth: 5,
+        borderColor: '#111111'
     }
 
     // get cavnas rows and columns
-    var canvasCols = Math.floor(canvasElem.width / snakeDetails.width);
-    var canvasRows = Math.floor(canvasElem.height / snakeDetails.height);
+    var canvasRows = Math.floor((canvasElem.width )/ snakeDetails.width);
+    var canvasCols = Math.floor((canvasElem.height ) / snakeDetails.height);
+
+    var getCenterOfCanvas = {
+        x: Math.floor(canvasRows / 2 ) * snakeDetails.width + snakeDetails.spaceBetweenParts,
+        y: Math.floor(canvasCols / 2 ) * snakeDetails.height + snakeDetails.spaceBetweenParts,
+    }; 
 
     var snakeTab = []; // hold snake parts
-    var holdPrevPosition = []; 
-    var foodHolder = [];
+    var holdPrevPosition = []; // hold parts to draw
+    var foodHolder = []; // food holder
 
     // all data / informations of the snake
     snake.data = {
@@ -86,17 +89,22 @@ var _Snake = (function (root, snake){
         differenceDirection: null,
     };
 
- snake.holdPrevPosition = holdPrevPosition;
+    snake.holdPrevPosition = holdPrevPosition; // for test
+
     // all snake functionalities
     var snakeFunctionalities = {
 
          /* For each part of snake call function "drawSnakeFromPart" */
         initSnake: function (){
             if(snake.data.gameStatus == true || snake.data.gameStatus == false){
+                 if(snake.data.gameStatus == true){
+               snakeFunctionalities.clearSnakePart();
+                
+            }
               
-                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor);
+                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                
-                snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color);
+                snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, snakeDetails.spaceBetweenParts);
                 requestAnimationFrame(snakeFunctionalities.initSnake);
             }  
         },
@@ -106,14 +114,13 @@ var _Snake = (function (root, snake){
             var len = x;
             for (let i = 0; i < len; i++) {
                 snakeTab.push({
-                    x: getCenterPositions.x + (snakeDetails.width * i),
-                    y: getCenterPositions.y
+                    x: getCenterOfCanvas.x + (snakeDetails.width * i),
+                    y: getCenterOfCanvas.y
                 });
             };
-
+            console.log(canvasElem.width % canvasRows /2);
             this.copyArrayD(snakeTab, holdPrevPosition);
-            snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, '#111111')
-            // snakeTab.forEach(snake.draw());
+            snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth)
             snake.updatePositions.previous();
             console.table(holdPrevPosition);
             snakeFunctionalities.createFood();
@@ -137,23 +144,18 @@ var _Snake = (function (root, snake){
                     
                     // console.log(x + '|' + y)
                     if(y == 0 ){ //x <= 20 && x !== 0 
-                        holdPrevPosition[i].x += (x < 0) ? -snakeDetails.velocity : snakeDetails.velocity;
-                        
+                        holdPrevPosition[i].x += (x < 0) ? -snakeDetails.velocity : snakeDetails.velocity; 
                     }
+
                     if(x == 0){ //y <= 20 && y !== 0
                         holdPrevPosition[i].y += (y < 0) ? -snakeDetails.velocity : snakeDetails.velocity;
-                    
-                    } 
-                    
-                }
-              
-                
-            } else {
-                // console.log("no");
-                var i = snakeTab.length-1;
+                    }   
+                }  
 
+            } else {
+
+                var i = snakeTab.length-1;
                 for(i; i > 0; i--){
-                    
                     snakeTab[i].x += ((snakeTab[i-1].x - snakeTab[i].x));
                     snakeTab[i].y += ((snakeTab[i-1].y - snakeTab[i].y));
                 }
@@ -163,21 +165,21 @@ var _Snake = (function (root, snake){
                 snakeDetails.velocity = speedup;
                 snakeFunctionalities.changeCoordinatesOfParts(); 
             }
-
+            // check if snake eaten food
             if(snakeFunctionalities.eat(foodHolder)){
                 snakeFunctionalities.addPartToArray();
                 snakeFunctionalities.createFood();
             } 
-         
-            if(snake.data.gameStatus == true){
-               snakeFunctionalities.clearSnakePart();
+            // clear cavas 
+            // if(snake.data.gameStatus == true){
+            //    snakeFunctionalities.clearSnakePart();
                 
-            }
+            // }
         },
 
         clearSnakePart: function(){
             
-            ctx.clearRect(2, 2, canvasElem.width-4, canvasElem.height -4);
+            ctx.clearRect(5, 5, canvasElem.width - 10, canvasElem.height - 10 );
         },
 
         copyArrayD: function(from, into){
@@ -196,12 +198,14 @@ var _Snake = (function (root, snake){
         },
 
         createFood: function(){
-            var foodX = Math.floor(Math.random() * canvasCols ) * snakeDetails.width ;
-            var foodY = Math.floor(Math.random() * canvasRows ) * snakeDetails.height ;
+            var foodX = (Math.floor((Math.random() * canvasRows )) * snakeDetails.width ) + (canvasElem.width % canvasRows / 2)  + (snakeDetails.spaceBetweenParts / 2);
+            var foodY = (Math.floor((Math.random() * canvasCols )) * snakeDetails.height ) + (canvasElem.height % canvasCols / 2) + (snakeDetails.spaceBetweenParts / 2);
+            // var foodX = Math.floor((Math.random() * (canvasCols - 1)) + 1) * snakeDetails.width ;
+            // var foodY = Math.floor((Math.random() * (canvasRows -1)) + 1 ) * snakeDetails.height ;
             console.log(foodX);
-            console.log(foodY)
+            console.log(foodY);
             foodHolder = [];
-            foodHolder.push({x: foodX, y: foodY});
+            return  foodHolder.push({x: foodX, y: foodY });
            
         },
         
@@ -223,6 +227,11 @@ var _Snake = (function (root, snake){
         },
         
     };
+    snake.testFood = function(){
+        snakeFunctionalities.createFood();
+         snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, snakeDetails.spaceBetweenParts);
+               
+    }
     
     // public snake functionalities
     snake.updatePositions = {

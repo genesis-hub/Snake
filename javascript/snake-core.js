@@ -233,7 +233,7 @@ var _Snake = (function (root, snake){
             var len = snakeTab.length - 2;
             // var i = 0;
             for(len; len > 1; len--){ //i; i < len; i++
-                if(holdPrevPosition[0].x == holdPrevPosition[len].x && holdPrevPosition[0].y == holdPrevPosition[le].y ){
+                if(holdPrevPosition[0].x == holdPrevPosition[len].x && holdPrevPosition[0].y == holdPrevPosition[len].y ){
                     console.log(snake.data.gameStatus);
                     snake.changeGameStatus();
                     console.log(snake.data.gameStatus);

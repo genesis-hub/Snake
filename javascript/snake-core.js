@@ -203,17 +203,22 @@ var _Snake = (function (root, snake){
 
         // creating food for snake 
         createFood: function(){
+            var len = snakeTab.length-1;
             var foodX = (Math.floor((Math.random() * canvasRows )) * snakeDetails.width ) + numbersToMovePoints.x;
             var foodY = (Math.floor((Math.random() * canvasCols )) * snakeDetails.height ) + numbersToMovePoints.y;
+            for(len; len >= 0; len--){
+                if(foodX == snakeTab[len].x && foodY == snakeTab[len].y){
+                    return this.createFood();
+                }
+            }
             foodHolder = [];
             return  foodHolder.push({x: foodX, y: foodY });
-           
         },
 
         // method to check if snake eaten the food
         eat: function(food){
             var dis = this.checkDist(food, holdPrevPosition);
-            if(dis.x < 5 && dis.y < 5 ){
+            if(dis.x < 25 && dis.y < 25 || dis.x == 0 &&  dis.y == 0){
                 return true;
             } else {
                 return false;
@@ -233,11 +238,11 @@ var _Snake = (function (root, snake){
             var len = snakeTab.length - 2;
             // var i = 0;
             for(len; len > 1; len--){ //i; i < len; i++
-                if(holdPrevPosition[0].x == holdPrevPosition[len].x && holdPrevPosition[0].y == holdPrevPosition[len].y ){
-                    console.log(snake.data.gameStatus);
+                var x = Math.abs(holdPrevPosition[0].x - holdPrevPosition[len].x);
+                var y = Math.abs(holdPrevPosition[0].y - holdPrevPosition[len].y);
+
+                if( x < 15 && y < 15 ){;
                     snake.changeGameStatus();
-                    console.log(snake.data.gameStatus);
-                    console.log('dd')
                     this.clearCanvas();
                     snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "red" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
               

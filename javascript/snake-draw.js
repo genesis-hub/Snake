@@ -21,13 +21,7 @@ var _Snake = (function (root, snake){
                     ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
                     // ctx.strokeStyle = 'crimson';
                     // ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
-                }
-                
-                // ctx.strokeStyle = bordColor;
-                // ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
-                //  ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
-                //  ctx.fillRect(snake.data.snakeParts[i].x  , snake.data.snakeParts[i].y  , width - space  , height - space );
-                
+                } 
             }   
 
             for(var i = 0; i < part.length ; i++){

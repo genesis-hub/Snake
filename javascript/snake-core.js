@@ -20,7 +20,7 @@ var _Snake = (function (root, snake){
         interval = 10;
 
     // get canvas element
-    var canvasElem = document.getElementById("gameCanvas");
+    var canvasElem = document.getElementById("game_canvas");
     // set canvas to '2D'
     var ctx = canvasElem.getContext('2d');
         //set cavas height and width
@@ -29,14 +29,14 @@ var _Snake = (function (root, snake){
 
     // snake details like color, width, height
     var snakeDetails = {
-        borderColor: "#101010",
-        color: "#234564",
+        borderColor: "#1d1d1d",
+        color: "#dedddd", //#dedddd
         width: 30,
         height: 30,
-        velocity: 0,
+        velocity: 2,
         score: null,
         length: 15,
-        speeed: 0,
+        
         spaceBetweenParts: 6,
     };
 
@@ -44,11 +44,12 @@ var _Snake = (function (root, snake){
         width: 30,
         height: 30,
         color: 'crimson',
+        borderColor:'#101010'
     }
 
     var canvasMap = {
         borderWidth: 5,
-        borderColor: '#111111'
+        borderColor: '#cfcfcf'
     }
 
     // get cavnas rows and columns
@@ -105,7 +106,7 @@ var _Snake = (function (root, snake){
         initSnake: function (){
             if(snake.data.gameStatus == true ){ // safety
                 snakeFunctionalities.clearCanvas(); 
-                snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, snakeDetails.spaceBetweenParts);
+                snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, foodDetails.borderColor, snakeDetails.spaceBetweenParts);
                 snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                 snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth);
                 requestAnimationFrame(snakeFunctionalities.initSnake);
@@ -161,7 +162,10 @@ var _Snake = (function (root, snake){
                 
                 snakeTab[0].x += (snake.data.directions.h  * snakeDetails.width );
                 snakeTab[0].y += (snake.data.directions.v  * snakeDetails.height );
-                snakeDetails.velocity = speedup;
+                if(snakeDetails.velocity < speedup){
+                    snakeDetails.velocity = speedup;
+                }
+                
                 snakeFunctionalities.changeCoordinatesOfParts(); 
             };
 
@@ -234,14 +238,13 @@ var _Snake = (function (root, snake){
                 if( x < 15 && y < 15 ){;
                     snake.changeGameStatus();
                     this.clearCanvas();
-                    snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "red" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                    snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                 }
             }
             if(snakeTab[0].x < 8 || snakeTab[0].y > 668 || snakeTab[0].x > 968  || snakeTab[0].y < 8){
                 snake.changeGameStatus();
                 this.clearCanvas();
-                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "red" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-             
+                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
             }
         },
 

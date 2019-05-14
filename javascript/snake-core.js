@@ -13,7 +13,7 @@ var _Snake = (function (root, snake){
     var toStr = Object.prototype.toString, // used for shorthand
         astr = "[object Array]";// used to comparison
   
-    var speedup = 1;
+    var speedup = 2;
     // set interval
     var myAnimateReq;
     var myInerval,
@@ -34,10 +34,11 @@ var _Snake = (function (root, snake){
         width: 30,
         height: 30,
         velocity: 2,
-        score: null,
-        length: 15,
-        
+        score: 0,
+        length: 10+1, // add 1 for property display
         spaceBetweenParts: 6,
+        consumed: 0,
+        snakeLife: 1,
     };
 
     var foodDetails = {
@@ -81,23 +82,16 @@ var _Snake = (function (root, snake){
         gameStatus: false,
         position: {
             previous: {
-                x: null,
-                y: null
+                x: 0,
+                y: 0
             },
             current: {
-                x: null,
-                y: null
+                x: 0,
+                y: 0
             }
         },
-        prevDirections: {
-            
-        },  
         snakeParts: snakeTab,
-        // testing 
-        differenceDirection: null,
     };
-
-    snake.holdPrevPosition = holdPrevPosition; // for test
 
     // all snake functionalities
     var snakeFunctionalities = {
@@ -108,6 +102,7 @@ var _Snake = (function (root, snake){
                 snakeFunctionalities.clearCanvas(); 
                 snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, foodDetails.borderColor, snakeDetails.spaceBetweenParts);
                 snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                snake.drawStats(ctx, snakeDetails.score, snake.data.snakeParts.length, snakeDetails.consumed);
                 snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth);
                 requestAnimationFrame(snakeFunctionalities.initSnake);
             }  
@@ -176,6 +171,8 @@ var _Snake = (function (root, snake){
             if(snakeFunctionalities.eat(foodHolder)){
                 snakeFunctionalities.addPartToArray();
                 snakeFunctionalities.createFood();
+                snakeFunctionalities.score();
+                
             };
          
             
@@ -239,20 +236,25 @@ var _Snake = (function (root, snake){
                     snake.changeGameStatus();
                     this.clearCanvas();
                     snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                    snake.drawStats(ctx, snakeDetails.score, snake.data.snakeParts.length, snakeDetails.consumed);
+              
                 }
-            }
+
+            };
             if(snakeTab[0].x < 8 || snakeTab[0].y > 668 || snakeTab[0].x > 968  || snakeTab[0].y < 8){
                 snake.changeGameStatus();
                 this.clearCanvas();
                 snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                snake.drawStats(ctx, snakeDetails.score, snake.data.snakeParts.length, snakeDetails.consumed);
+              
             }
         },
 
         randomCoordinates: function(){
             var coordy = {
-                x: (Math.floor((Math.random() * canvasRows )) * snakeDetails.width ) + numbersToMovePoints.x,
-                y: (Math.floor((Math.random() * canvasCols )) * snakeDetails.height ) + numbersToMovePoints.y
-            }
+                x: (Math.floor((Math.random() * canvasRows)) * snakeDetails.width ) + numbersToMovePoints.x,
+                y: (Math.floor((Math.random() * (canvasCols - 1) + 1) )* snakeDetails.height ) + numbersToMovePoints.y
+            };
             var len = snakeTab.length-1;
             for(len; len >= 0; len--){
                 if(coordy.x == snakeTab[len].x && coordy.y == snakeTab[len].y){
@@ -264,9 +266,18 @@ var _Snake = (function (root, snake){
                     }
                 }
                
-            }
+            };
+
+            console.log(coordy);
             return coordy;
         },
+
+        score: function(){
+            console.log(2);
+            snakeDetails.consumed+=1;
+           
+           
+        }
 
         // addBonusItems: function(item){
         //     if(item == 'speedUp'){
@@ -316,7 +327,6 @@ var _Snake = (function (root, snake){
         if (up == "update"){
             snake.updatePositions.current();
         }   
-         
         if (snake.data.directions.h == -1 || snake.data.directions.h  == 1) {
             calc = Math.abs(snake.data.position.previous.x - snake.data.position.current.x);
         } else {

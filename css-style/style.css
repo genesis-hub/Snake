@@ -1,3 +1,7 @@
+@font-face {
+    font-family: guide_font;
+    src: url('../fonts/VeraMono-Bold.ttf');
+}
 html {
     font-size: 62.5%;
 }
@@ -10,19 +14,22 @@ html, body {
 
 body {
     font-size: 1.6rem;
+    color: #f3f3f3
 }
+
+
 
 #wrapper {
     position: relative; 
     background-color: rgb(29, 29, 29);
     height: 100%;
     width: 100%; 
-   
+    z-index: 999;
  
 }
 
-#gameCanvas {
-    background:rgb(128, 128, 128);
+#game_canvas {
+    background:#1d1d1d; 
     display: block; /* delete isues with margin bottom */
     vertical-align: bottom; /* delete isues with margin bottom */
     /* margin: 0 auto; */
@@ -74,16 +81,15 @@ body {
 #game_guide {
     position: absolute;
     display: block;
-    width: 500px;
-    height: 250px;
-    top: 50%;
-    border-radius: 5px;
-    margin-top: -125px;
+    width: 660px;
+    height: 350px;
+    top: 20%;
+    /* border-radius: 5px; */
     left: 0;
     right: 0;
     margin-left: auto;
     margin-right: auto;
-    background: #232323;
+    /* background: #2c2c2c; */
     padding: 10px;
 }
 
@@ -93,30 +99,31 @@ body {
     display: block;
     width: 100%;
     height: 30px;
-    font-family: monospace;
-    font-size: 2.3rem;
-    font-weight: 600;
+    font-family: guide_font;
+    font-size: 2.5rem;
+    letter-spacing: 1rem;
     color: aliceblue;
     text-align: center;
 }
 
-#game_guide__startstop {
+#game_guide p {
     display: block;
     position: relative;
-    font-family: monospace;
-    font-size: 2.1rem;
-    font-weight: 600;
+    font-family:guide_font;
+    font-size: 2.0rem;
+    letter-spacing: 0;
+   
     width: 100%;
-    height: 30px;
     color: aliceblue;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 30px;
+    line-height: 3rem;
 }
 
 #game_stats { 
     padding: 10px;
     position: absolute;
-    display: block;
+    display: none;
     top: 30px;
     right: 30px;
     background: #232323;

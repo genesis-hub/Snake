@@ -104,10 +104,10 @@ var _Snake = (function (root, snake){
          /* For each part of snake call function "drawSnakeFromPart" */
         initSnake: function (){
             if(snake.data.gameStatus == true ){ // safety
-
                 snakeFunctionalities.clearCanvas(); 
-                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                 snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, snakeDetails.spaceBetweenParts);
+                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth);
                 requestAnimationFrame(snakeFunctionalities.initSnake);
             }  
         },
@@ -122,18 +122,15 @@ var _Snake = (function (root, snake){
                 });
             };
             this.copyArrayD(snakeTab, holdPrevPosition);
-            snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth)
             snake.updatePositions.previous();
-            console.table(holdPrevPosition);
             snakeFunctionalities.createFood();
            
         }, //TODO: add "start button" to call function
 
 
         addPartToArray: function(){
-            // console.log('aa');
-            snakeTab.push({x: foodHolder[0].x, y: foodHolder[0].y});
-            this.copyArrayD(snakeTab, holdPrevPosition);
+            snakeTab.push({x: snakeTab[snakeTab.length-2].x , y: snakeTab[snakeTab.length-2].y});
+            holdPrevPosition.push({x: holdPrevPosition[holdPrevPosition.length-2].x , y: holdPrevPosition[holdPrevPosition.length-2].y})
        },
 
         // 
@@ -182,7 +179,7 @@ var _Snake = (function (root, snake){
 
         // clear cabvas
         clearCanvas: function(){
-            ctx.clearRect(5, 5, canvasElem.width - 10, canvasElem.height - 10 );
+            ctx.clearRect(3, 3, canvasElem.width - 5, canvasElem.height - 5 );
         },
 
         // deep copy, used to copy array to draw
@@ -203,16 +200,9 @@ var _Snake = (function (root, snake){
 
         // creating food for snake 
         createFood: function(){
-            var len = snakeTab.length-1;
-            var foodX = (Math.floor((Math.random() * canvasRows )) * snakeDetails.width ) + numbersToMovePoints.x;
-            var foodY = (Math.floor((Math.random() * canvasCols )) * snakeDetails.height ) + numbersToMovePoints.y;
-            for(len; len >= 0; len--){
-                if(foodX == snakeTab[len].x && foodY == snakeTab[len].y){
-                    return this.createFood();
-                }
-            }
+            var food = this.randomCoordinates();
             foodHolder = [];
-            return  foodHolder.push({x: foodX, y: foodY });
+            return  foodHolder.push(food);
         },
 
         // method to check if snake eaten the food
@@ -235,7 +225,7 @@ var _Snake = (function (root, snake){
         },
 
         checkIfSnakeDead: function(){
-            var len = snakeTab.length - 2;
+            var len = holdPrevPosition.length - 2;
             // var i = 0;
             for(len; len > 1; len--){ //i; i < len; i++
                 var x = Math.abs(holdPrevPosition[0].x - holdPrevPosition[len].x);
@@ -245,11 +235,35 @@ var _Snake = (function (root, snake){
                     snake.changeGameStatus();
                     this.clearCanvas();
                     snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "red" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-              
                 }
             }
-            
         },
+
+        randomCoordinates: function(){
+            var coordy = {
+                x: (Math.floor((Math.random() * canvasRows )) * snakeDetails.width ) + numbersToMovePoints.x,
+                y: (Math.floor((Math.random() * canvasCols )) * snakeDetails.height ) + numbersToMovePoints.y
+            }
+            var len = snakeTab.length-1;
+            for(len; len >= 0; len--){
+                if(coordy.x == snakeTab[len].x && coordy.y == snakeTab[len].y){
+                    return this.randomCoordinates();
+                } 
+                if(foodHolder.length > 0){
+                    if (coordy.x == foodHolder[0].x && coordy.y == foodHolder[0].y){
+                        return this.randomCoordinates();
+                    }
+                }
+               
+            }
+            return coordy;
+        },
+
+        addBonusItems: function(item){
+            if(item == 'speedUp'){
+                snake.drawBonusItmes(ctx,)
+            }
+        }
         
     };
 

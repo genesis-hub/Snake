@@ -14,14 +14,15 @@ html, body {
 
 body {
     font-size: 1.6rem;
-    color: #f3f3f3
+    color: #f3f3f3;
+    background-color: #1d1d1d;
 }
 
 
 
 #wrapper {
     position: relative; 
-    background-color: rgb(29, 29, 29);
+    background-color: #1d1d1d;
     height: 100%;
     width: 100%; 
     z-index: 999;
@@ -31,14 +32,14 @@ body {
 #game_canvas {
     background:#1d1d1d; 
     display: block; /* delete isues with margin bottom */
-    vertical-align: bottom; /* delete isues with margin bottom */
-    /* margin: 0 auto; */
+    /* vertical-align: bottom; delete isues with margin bottom */
     position: absolute;
-    top: 150px;
+    top: 50%;
     margin-left: auto;
     margin-right: auto;
-    left: 0;
-    right: 0;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #game_background {
@@ -120,30 +121,4 @@ body {
     line-height: 3rem;
 }
 
-#game_stats { 
-    padding: 10px;
-    position: absolute;
-    display: none;
-    top: 30px;
-    right: 30px;
-    background: #232323;
-    width: 200px;
-    height: 200px;
-    color: aliceblue;
-    opacity: 0.9;
-    border-radius: 5px;
-}
 
-#game_stats h1 {
-    font-family: monospace;
-    font-size: 2.1rem;
-    font-weight: 600;
-    text-align: center;
-}
-#game_stats__list {
-    margin-top: 10px;
-}
-
-#game_stats__list dt{
-    padding: 10px;
-}

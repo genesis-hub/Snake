@@ -237,6 +237,12 @@ var _Snake = (function (root, snake){
                     snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "red" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                 }
             }
+            if(snakeTab[0].x < 8 || snakeTab[0].y > 668 || snakeTab[0].x > 968  || snakeTab[0].y < 8){
+                snake.changeGameStatus();
+                this.clearCanvas();
+                snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "red" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+             
+            }
         },
 
         randomCoordinates: function(){
@@ -259,11 +265,11 @@ var _Snake = (function (root, snake){
             return coordy;
         },
 
-        addBonusItems: function(item){
-            if(item == 'speedUp'){
-                snake.drawBonusItmes(ctx,)
-            }
-        }
+        // addBonusItems: function(item){
+        //     if(item == 'speedUp'){
+        //         snake.drawBonusItmes(ctx,)
+        //     }
+        // }
         
     };
 

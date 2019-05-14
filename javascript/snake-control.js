@@ -6,9 +6,7 @@ var _Snake = (function(snk){
        
         var key = e.keyCode;
         var calc;
-        // console.log(key)
-        
-    
+   
         if (key == 32 && snk.data.gameStatus == false) {
             console.log("%cGame Started", "color: blue; font-size: 15px");
             snk.UI.hideBg();
@@ -24,7 +22,6 @@ var _Snake = (function(snk){
         };
        
         // check if you can change direction
-        // snk.updatePositions.current();
         var calc = snk.directionChecker('update');
         
         //  h -1 left
@@ -34,26 +31,19 @@ var _Snake = (function(snk){
 
 
         if (calc >= 20 && snk.data.gameStatus == true) {
-           
-            snk.differenceDirection = calc;
             // left
             if(key == 37 || key == 65){
                 if(snk.data.directions.h !== 1 && snk.data.directions.h !== -1){
-                    snk.updatePositions.previous();
-                    // snk.data.position.previous.x = snk.data.snakeParts[0].x;
-            
+                    snk.data.position.previous.x = snk.data.snakeParts[0].x;
                     snk.data.directions.v = 0;
                     snk.data.directions.h = -1;  
-                   
                 }
                 return;
             };
             // up
             if(key == 38 || key == 87){
                 if(snk.data.directions.v !== 1 && snk.data.directions.v !== -1){  
-                    snk.updatePositions.previous();
-                    // snk.data.position.previous.y = snk.data.snakeParts[0].y;
-
+                    snk.data.position.previous.y = snk.data.snakeParts[0].y;
                     snk.data.directions.v = -1;
                     snk.data.directions.h = 0;
                 }
@@ -78,10 +68,6 @@ var _Snake = (function(snk){
                 return;
             };
 
-        
-        } else {
-            // TODO: add change direction with delay ?? HMM??
-
         };
 
          // for test 
@@ -92,7 +78,6 @@ var _Snake = (function(snk){
         }
 
     },false);
-    
     
     return snk;
 })(_Snake || {});

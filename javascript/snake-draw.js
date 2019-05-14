@@ -7,36 +7,47 @@ var _Snake = (function (root, snake){
     console.log(snake)
    
     var snakeDrawFunctions = {
-        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor,space) {
+        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor, space) {
            
 
-            for(var i= 0; i < part.length-1; i++){ 
+            for(var i= 0; i < snake.data.snakeParts.length-1; i++){ 
                 ctx.fillStyle =  color;
                 ctx.lineWidth = 1;
-                ctx.fillRect(part[i].x  , part[i].y  , width - space, height - space );
+                //  ctx.strokeStyle = bordColor;
+                ctx.fillRect(part[i].x, part[i].y, width - space, height - space);
                 // ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
-                ctx.fillStyle = "crimson";
-                ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
-                // ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
+                if(snake.data.gameStatus == true){
+                    ctx.fillStyle = "crimson";
+                    ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
+                    // ctx.strokeStyle = 'crimson';
+                    // ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
+                }
+                
+                // ctx.strokeStyle = bordColor;
+                // ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
+                //  ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
+                //  ctx.fillRect(snake.data.snakeParts[i].x  , snake.data.snakeParts[i].y  , width - space  , height - space );
                 
             }   
 
             for(var i = 0; i < part.length ; i++){
                 if( i > 1 && snake.data.snakeParts[i-2].x !== snake.data.snakeParts[i].x && snake.data.snakeParts[i-2].y !== snake.data.snakeParts[i].y){ 
                     ctx.fillStyle = color;
-                    ctx.fillRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
+                    ctx.fillRect(snake.data.snakeParts[i-1].x, snake.data.snakeParts[i-1].y, width - space, height - space);
+                    // ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
                 }
             } 
         
         },
 
-        drawFood: function(part, ctx, width, height, color, space ){
+        drawFood: function(part, ctx, width, height, color, borderColor,space ){
             ctx.fillStyle = color;
             // ctx.strokeStyle = bordColor;
             ctx.lineWidth = 1;
             ctx.fillRect(part[0].x , part[0].y , width - space  , height - space );
             // ctx.fillRect(part[0].x, part[0].y, 30, 30);
-              ctx.strokeRect(part[0].x, part[0].y, width -  space, height - space);
+            ctx.strokeStyle = borderColor;
+            ctx.strokeRect(part[0].x, part[0].y, width -  space, height - space);
         },
 
         drawMapBorder: function(ctx, width, height, borderColor, borderWidth){
@@ -45,7 +56,11 @@ var _Snake = (function (root, snake){
             ctx.lineWidth = borderWidth;
             ctx.strokeStyle = borderColor;
             ctx.strokeRect(0, 0, width   , height );
-        }
+        },
+
+        // drawBonusItmes: function(part, ctx, width, height, color, bordColor, space){
+
+        // }
 
 
 
@@ -121,5 +136,6 @@ var _Snake = (function (root, snake){
     snake.draw = snakeDrawFunctions.drawSnakeFromParts;
     snake.drawFood = snakeDrawFunctions.drawFood;
     snake.drawMapBorder = snakeDrawFunctions.drawMapBorder;
+    snake.drawBonusItmes = snakeDrawFunctions.drawBonusItmes;
     return snake;
 })(this, _Snake || {}); 

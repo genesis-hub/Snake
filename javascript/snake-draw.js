@@ -9,18 +9,18 @@ var _Snake = (function (root, snake){
     var snakeDrawFunctions = {
         drawSnakeFromParts: function (part, ctx, width, height, color, bordColor, space) {
            
-
+            // space = 1;
             for(var i= 0; i < snake.data.snakeParts.length-1; i++){ 
                 ctx.fillStyle =  color;
                 ctx.lineWidth = 1;
                 //  ctx.strokeStyle = bordColor;
                 ctx.fillRect(part[i].x, part[i].y, width - space, height - space);
-                // ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
+                //  ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
                 if(snake.data.gameStatus == true){
                     ctx.fillStyle = "crimson";
                     ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
                     // ctx.strokeStyle = 'crimson';
-                    // ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
+                    //  ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
                 } 
             }   
 
@@ -28,7 +28,7 @@ var _Snake = (function (root, snake){
                 if( i > 1 && snake.data.snakeParts[i-2].x !== snake.data.snakeParts[i].x && snake.data.snakeParts[i-2].y !== snake.data.snakeParts[i].y){ 
                     ctx.fillStyle = color;
                     ctx.fillRect(snake.data.snakeParts[i-1].x, snake.data.snakeParts[i-1].y, width - space, height - space);
-                    // ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
+                    //  ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
                 }
             } 
         
@@ -49,8 +49,36 @@ var _Snake = (function (root, snake){
             // ctx.fillStyle = color;
             ctx.lineWidth = borderWidth;
             ctx.strokeStyle = borderColor;
+            
+            ctx.beginPath();
+            ctx.setLineDash([0,0]);
             ctx.strokeRect(0, 0, width   , height );
         },
+
+        drawStats: function(ctx, score, difficulty, consumed, combo, time, combotime){
+            // var opacity = 0.9;
+             combo = combo.toString();
+            //  console.log(combo.length)
+            ctx.fillStyle = '#fff';
+            ctx.font = "2rem Monospace";
+            ctx.fillText("Consumed: " + consumed ,20, 22);
+            ctx.fillText("Score: " + score, 230, 22);
+            ctx.fillText("Combo: x" + combo, 390, 22);
+            if(combo > 0){
+                ctx.fillText("["+ combotime +"]", 465 + (combo.length * 10), 22);
+            }
+            ctx.fillText("Time: " + time, 595, 22);
+            ctx.fillText("Difficulty: " + difficulty, 820, 22);
+
+            ctx.strokeStyle = '#cfcfcf';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.setLineDash([7, 5]);
+            ctx.moveTo(18, 33);
+            ctx.lineTo(990, 33);
+            ctx.stroke();
+            
+        }
 
         // drawBonusItmes: function(part, ctx, width, height, color, bordColor, space){
 
@@ -130,6 +158,6 @@ var _Snake = (function (root, snake){
     snake.draw = snakeDrawFunctions.drawSnakeFromParts;
     snake.drawFood = snakeDrawFunctions.drawFood;
     snake.drawMapBorder = snakeDrawFunctions.drawMapBorder;
-    snake.drawBonusItmes = snakeDrawFunctions.drawBonusItmes;
+    snake.drawStats = snakeDrawFunctions.drawStats;
     return snake;
 })(this, _Snake || {}); 

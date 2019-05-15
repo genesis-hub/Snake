@@ -18,6 +18,8 @@ var _Snake = (function (root, snake){
     var myAnimateReq;
     var myInerval,
         interval = 10;
+    var timeSpentInterval,
+        tsInterval =  1000;    
 
     // get canvas element
     var canvasElem = document.getElementById("game_canvas");
@@ -26,6 +28,13 @@ var _Snake = (function (root, snake){
         //set cavas height and width
         canvasElem.width = 1000;
         canvasElem.height = 700;
+
+
+    var timeSpent = {
+            h: 0,
+            m: 0,
+            s: 0,
+    };
 
     // snake details like color, width, height
     var snakeDetails = {
@@ -39,6 +48,8 @@ var _Snake = (function (root, snake){
         spaceBetweenParts: 6,
         consumed: 0,
         snakeLife: 1,
+        difficultyLevel: 'Normal',
+        time: '00:00:00',
     };
 
     var foodDetails = {
@@ -73,7 +84,7 @@ var _Snake = (function (root, snake){
     var holdPrevPosition = []; // hold parts to draw
     var foodHolder = []; // food holder
 
-    // all data / informations of the snake
+    // all current data / informations of the snake
     snake.data = {
         directions: {
             v: 0,
@@ -102,7 +113,7 @@ var _Snake = (function (root, snake){
                 snakeFunctionalities.clearCanvas(); 
                 snake.drawFood(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, foodDetails.borderColor, snakeDetails.spaceBetweenParts);
                 snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-                snake.drawStats(ctx, snakeDetails.score, snake.data.snakeParts.length, snakeDetails.consumed);
+                snake.drawStats(ctx, snakeDetails.score, snakeDetails.difficultyLevel, snakeDetails.consumed, snakeDetails.time);
                 snake.drawMapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth);
                 requestAnimationFrame(snakeFunctionalities.initSnake);
             }  
@@ -120,6 +131,7 @@ var _Snake = (function (root, snake){
             this.copyArrayD(snakeTab, holdPrevPosition);
             snake.updatePositions.previous();
             snakeFunctionalities.createFood();
+            timeSpentInterval = setInterval(snakeFunctionalities.timeSpent,tsInterval);
            
         }, //TODO: add "start button" to call function
 
@@ -236,7 +248,7 @@ var _Snake = (function (root, snake){
                     snake.changeGameStatus();
                     this.clearCanvas();
                     snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-                    snake.drawStats(ctx, snakeDetails.score, snake.data.snakeParts.length, snakeDetails.consumed);
+                    snake.drawStats(ctx, snakeDetails.score,  snakeDetails.difficultyLevel, snakeDetails.consumed, snakeDetails.time);
               
                 }
 
@@ -245,7 +257,7 @@ var _Snake = (function (root, snake){
                 snake.changeGameStatus();
                 this.clearCanvas();
                 snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-                snake.drawStats(ctx, snakeDetails.score, snake.data.snakeParts.length, snakeDetails.consumed);
+                snake.drawStats(ctx, snakeDetails.score, snakeDetails.difficultyLevel, snakeDetails.consumed, snakeDetails.time);
               
             }
         },
@@ -268,15 +280,38 @@ var _Snake = (function (root, snake){
                
             };
 
-            console.log(coordy);
             return coordy;
         },
 
         score: function(){
-            console.log(2);
+        
             snakeDetails.consumed+=1;
+            
            
-           
+        },
+
+        timeSpent: function(){
+            if(snake.data.gameStatus == true){
+                if(timeSpent.s < 59){
+                    timeSpent.s += 1;
+                } else {
+                    timeSpent.m += 1;
+                    timeSpent.s = 0;
+                }   
+                
+                if(timeSpent.m == 60){
+                    timeSpent.m = 0;
+                    timeSpent.h +=1;
+                    
+                }
+
+                var setTwoDigits = function (number){
+                    return (number < 10 ? '0' : '') + number;
+                };
+                
+                return snakeDetails.time = setTwoDigits(timeSpent.h) + ':' + setTwoDigits(timeSpent.m) + ':' + setTwoDigits(timeSpent.s);
+            }
+
         }
 
         // addBonusItems: function(item){
@@ -286,7 +321,7 @@ var _Snake = (function (root, snake){
         // }
         
     };
-
+    snake.time = timeSpent;
     // test function
     snake.testFood = function(){
         snakeFunctionalities.createFood();
@@ -313,10 +348,13 @@ var _Snake = (function (root, snake){
             snake.data.gameStatus = true;
             myAnimateReq = requestAnimationFrame(snakeFunctionalities.initSnake);
             myInerval = setInterval(snakeFunctionalities.changeCoordinatesOfParts, interval);
+          
+           
         } else {
             snake.data.gameStatus = false;
             cancelAnimationFrame(myAnimateReq);
             clearInterval(myInerval);
+            // clearInterval(timeSpentInterval);
             
         }
     };

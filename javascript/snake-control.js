@@ -6,18 +6,13 @@ var _Snake = (function(snk){
        
         var key = e.keyCode;
         var calc;
-   
         if (key == 32 && snk.data.gameStatus == false) {
-            console.log("%cGame Started", "color: blue; font-size: 15px");
             snk.UI.hideBg();
-            snk.UI.hide();
-            snk.changeGameStatus();
+            // snk.UI.hide();
+            snk.toggleGameStatus();
             return;
-
-        } else if (key == 32 && snk.data.gameStatus == true) {
-            console.log("%cGame Stopped", "color: crimson; font-size: 15px");
-            // snk.UI.toggleUi();
-            snk.changeGameStatus();
+        } else if (key == 32 && snk.data.gameStatus == true) {       // snk.UI.toggleUi();
+            snk.toggleGameStatus();
             return;
         };
        
@@ -29,7 +24,7 @@ var _Snake = (function(snk){
         //  h 1 right 
         //  v 1 down
 
-
+        /* ------ SNAKE CONTROLLING ----- */
         if (calc >= 20 && snk.data.gameStatus == true) {
             // left
             if(key == 37 || key == 65){
@@ -68,7 +63,29 @@ var _Snake = (function(snk){
                 return;
             };
 
-        };
+        } else {
+            
+
+        }
+
+
+
+        /* ------ MENU CONTROLLING ----- */
+
+        if(key == 38){
+        
+            snk.changeMenuIndex(-1)
+        }
+        if(key == 40){
+            snk.changeMenuIndex(+1)
+        }
+
+        if(key == 13){
+            
+        }
+
+
+
 
          // for test 
         if(key == 107){
@@ -76,6 +93,22 @@ var _Snake = (function(snk){
         } else if(key == 109) {
             snk.changeVelocity(-1);
         }
+
+
+        // if(key == 38){
+        // //    var  x = snk.returnValue('uiProperties.menu.index');
+        // //    x++
+        // //    console.log(x)
+        
+        //     snk.changeMenuIndex(-1)
+        // }
+        // if(key == 40){
+        //     snk.changeMenuIndex(+1)
+        // }
+
+        // if(key == 13){
+
+        // }
 
     },false);
     

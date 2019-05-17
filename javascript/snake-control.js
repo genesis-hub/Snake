@@ -7,8 +7,7 @@ var _Snake = (function(snk){
         var key = e.keyCode;
         var calc;
         if (key == 32 && snk.data.gameStatus == false) {
-            snk.UI.hideBg();
-            // snk.UI.hide();
+          
             snk.toggleGameStatus();
             return;
         } else if (key == 32 && snk.data.gameStatus == true) {       // snk.UI.toggleUi();

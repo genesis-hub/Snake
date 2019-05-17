@@ -7,16 +7,19 @@ var _Snake = (function (root, snake){
     console.log(snake)
    
     var snakeDrawFunctions = {
-        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor, space) {
+        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor, space, life) {
            
-            // space = 1;
+            if(life != 1){
+                color =  'black';
+            } 
             for(var i= 0; i < snake.data.snakeParts.length-1; i++){ 
+               
                 ctx.fillStyle =  color;
                 ctx.lineWidth = 1;
                 //  ctx.strokeStyle = bordColor;
                 ctx.fillRect(part[i].x, part[i].y, width - space, height - space);
                 //  ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
-                if(snake.data.gameStatus == true){
+                if(life == 1 ){
                     ctx.fillStyle = "crimson";
                     ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
                     // ctx.strokeStyle = 'crimson';
@@ -28,6 +31,7 @@ var _Snake = (function (root, snake){
                 if( i > 1 && snake.data.snakeParts[i-2].x !== snake.data.snakeParts[i].x && snake.data.snakeParts[i-2].y !== snake.data.snakeParts[i].y){ 
                     ctx.fillStyle = color;
                     ctx.fillRect(snake.data.snakeParts[i-1].x, snake.data.snakeParts[i-1].y, width - space, height - space);
+                    //  ctx.fillRect(snake.data.snakeParts[part.length-2].x, snake.data.snakeParts[part.length-2].y, width - space, height - space);
                     //  ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
                 }
             } 
@@ -56,8 +60,9 @@ var _Snake = (function (root, snake){
         },
 
         drawStats: function(ctx, score, difficulty, consumed, combo, time, combotime){
+             ctx.textAlign = 'left'
             // var opacity = 0.9;
-             combo = combo.toString();
+            combo = combo.toString();
             //  console.log(combo.length)
             ctx.fillStyle = '#fff';
             ctx.font = "2rem Monospace";
@@ -78,6 +83,121 @@ var _Snake = (function (root, snake){
             ctx.lineTo(990, 33);
             ctx.stroke();
             
+        },
+
+        drawCountToStart: function(ctx, countDown, coordy){
+            ctx.textAlign = 'left'
+            ctx.fillStyle = '#fff';
+            ctx.font = "3.5rem Monospace";
+            if(countDown == 0 ){
+                
+                ctx.fillText("GO!", coordy.x - 10, coordy.y - 20);
+            } else if (countDown == 'PAUSE'){
+                ctx.fillText(countDown, coordy.x - 35, coordy.y - 20);
+            }  else if (countDown == 'GAME OVER!'){
+                ctx.fillText(countDown, coordy.x - 65, coordy.y - 20);
+            }else {  
+                ctx.fillText(countDown, coordy.x, coordy.y - 20);
+            }
+
+           
+        },
+
+        drawMenu: function(ctx, coordy, prop){
+         
+            ctx.fillStyle = prop.color;
+            ctx.fillRect(coordy.x - prop.width / 2, coordy.y - prop.height / 2, prop.width , prop.height);
+            
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 4;
+            // ctx.fillStyle = '#dadada';
+            ctx.font = "3rem Monospace";
+       
+            ctx.textAlign = prop.align;
+       
+
+            for(var i = 0; i < prop.list.length ; i++){
+                var text = ctx.measureText(prop.list[prop.index]);
+              
+                if(i == prop.index){
+                    ctx.fillStyle = '#fff';
+                     ctx.fillText(prop.list[i], coordy.x , prop.coordinates.y + 50 + prop.margin * i)
+                    ctx.beginPath();
+                    // ctx.setLineDash([7, 5]);
+                    ctx.moveTo(coordy.x - text.width /2 -20, ((coordy.y - prop.height / 2) + 80) + prop.margin * i );
+                    ctx.lineTo(coordy.x - text.width /2 -20, (coordy.y - prop.height / 2 + 105) + prop.margin * i);
+                    // ctx.lineTo((coordy.x - prop.width / 2) + 30, coordy.y - prop.height / 2);
+                    ctx.stroke();   
+                    // console.log('a')
+                } else {
+                    ctx.fillStyle = '#e4e4e4';
+                    ctx.fillText(prop.list[i], coordy.x , prop.coordinates.y + 50 + prop.margin * i)
+                }
+               
+                
+            }
+            ctx.fillStyle = '#fff';
+            ctx.font = "3.0rem Monospace";
+            ctx.fillText("S N A K E", coordy.x , prop.coordinates.y - 40)
+
+
+            /* ------ MENU BORDER ------ */
+
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            // ctx.setLineDash([7, 5]);
+            ctx.moveTo(coordy.x - prop.width / 2, (coordy.y - prop.height / 2) + 30 );
+            ctx.lineTo((coordy.x - prop.width / 2), coordy.y - prop.height / 2);
+            ctx.lineTo((coordy.x - prop.width / 2) + 30, coordy.y - prop.height / 2);
+            ctx.stroke();
+
+
+            ctx.beginPath();
+            // ctx.setLineDash([7, 5]);
+            ctx.moveTo(coordy.x + prop.width / 2, (coordy.y - prop.height / 2) + 30 );
+            ctx.lineTo((coordy.x + prop.width / 2), coordy.y - prop.height / 2);
+            ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
+            ctx.stroke();
+
+
+            
+            ctx.beginPath();
+            // ctx.setLineDash([7, 5]);
+            ctx.moveTo(coordy.x + prop.width / 2, (coordy.y + prop.height / 2) - 60 );
+            ctx.lineTo((coordy.x + prop.width / 2), coordy.y + prop.height / 2  - 30);
+            ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y + prop.height / 2 - 30);
+            ctx.stroke();
+
+            ctx.beginPath();
+            // ctx.setLineDash([7, 5]);
+            ctx.moveTo(coordy.x - prop.width / 2, (coordy.y + prop.height / 2) - 60 );
+            ctx.lineTo((coordy.x - prop.width / 2), coordy.y + prop.height / 2 - 30);
+            ctx.lineTo((coordy.x - prop.width / 2) + 30, coordy.y + prop.height / 2 - 30);
+            ctx.stroke();
+
+
+
+            // ctx.beginPath();
+            // // ctx.setLineDash([7, 5]);
+            // ctx.moveTo(coordy.x - prop.width / 2, (coordy.y + prop.height / 2) );
+            // ctx.lineTo((coordy.x + prop.width / 2), coordy.y +prop.height / 2);
+            // // ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
+            // ctx.stroke();
+
+            // ctx.beginPath();
+            // // ctx.setLineDash([7, 5]);
+            // ctx.moveTo(coordy.x - prop.width / 2, (coordy.y -  prop.height / 2) );
+            // ctx.lineTo((coordy.x + prop.width / 2), coordy.y -prop.height / 2);
+            // // ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
+            // ctx.stroke();
+
+            // ctx.fillRect(coordy.x, coordy.y, 5, 5);
+
+
+            // ctx.fillRect(coordy.x, coordy.y, 1, 300);
+            // ctx.fillRect(coordy.x, coordy.y, 1, -300);
+            // ctx.fillRect(coordy.x, coordy.y, 300, 1);
+            // ctx.fillRect(coordy.x, coordy.y, -300, 1);
         }
 
         // drawBonusItmes: function(part, ctx, width, height, color, bordColor, space){
@@ -155,9 +275,19 @@ var _Snake = (function (root, snake){
     };
 
     // public method
-    snake.draw = snakeDrawFunctions.drawSnakeFromParts;
-    snake.drawFood = snakeDrawFunctions.drawFood;
-    snake.drawMapBorder = snakeDrawFunctions.drawMapBorder;
-    snake.drawStats = snakeDrawFunctions.drawStats;
+    snake.draw = {
+        snakeFromParts: snakeDrawFunctions.drawSnakeFromParts,
+        food: snakeDrawFunctions.drawFood,
+        mapBorder: snakeDrawFunctions.drawMapBorder,
+        stats: snakeDrawFunctions.drawStats,
+        countToStart: snakeDrawFunctions.drawCountToStart,
+        menu: snakeDrawFunctions.drawMenu,
+    }
+    // snake.draw = snakeDrawFunctions.drawSnakeFromParts;
+    // snake.drawFood = snakeDrawFunctions.drawFood;
+    // snake.drawMapBorder = snakeDrawFunctions.drawMapBorder;
+    // snake.drawStats = snakeDrawFunctions.drawStats;
+    // snake.drawCountToStart = snakeDrawFunctions.drawCountToStart;
+    // snake.drawMenu = snakeDrawFunctions.drawMenu;
     return snake;
 })(this, _Snake || {}); 

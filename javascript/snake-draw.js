@@ -2,212 +2,253 @@
 /* Copyright genesis-hub */
 
 // drawing functions
-var _Snake = (function (root, snake){
+var Snake = (function (root, snk){
     'use strict';
-    console.log(snake)
-   
-    var snakeDrawFunctions = {
-        drawSnakeFromParts: function (part, ctx, width, height, color, bordColor, space, life) {
-           
-            if(life != 1){
-                color =  'black';
-            } 
-            for(var i= 0; i < snake.data.snakeParts.length-1; i++){ 
-               
-                ctx.fillStyle =  color;
-                ctx.lineWidth = 1;
-                //  ctx.strokeStyle = bordColor;
-                ctx.fillRect(part[i].x, part[i].y, width - space, height - space);
-                //  ctx.strokeRect(part[i].x  , part[i].y  , width - space, height - space)
-                if(life == 1 ){
-                    ctx.fillStyle = "crimson";
-                    ctx.fillRect(part[0].x , part[0].y  , width - space  , height - space );
-                    // ctx.strokeStyle = 'crimson';
-                    //  ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
-                } 
-            }   
-
-            for(var i = 0; i < part.length ; i++){
-                if( i > 1 && snake.data.snakeParts[i-2].x !== snake.data.snakeParts[i].x && snake.data.snakeParts[i-2].y !== snake.data.snakeParts[i].y){ 
-                    ctx.fillStyle = color;
-                    ctx.fillRect(snake.data.snakeParts[i-1].x, snake.data.snakeParts[i-1].y, width - space, height - space);
-                    //  ctx.fillRect(snake.data.snakeParts[part.length-2].x, snake.data.snakeParts[part.length-2].y, width - space, height - space);
-                    //  ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
-                }
-            } 
-        
-        },
-
-        drawFood: function(part, ctx, width, height, color, borderColor,space ){
-            ctx.fillStyle = color;
-            // ctx.strokeStyle = bordColor;
-            ctx.lineWidth = 1;
-            ctx.fillRect(part[0].x , part[0].y , width - space  , height - space );
-            // ctx.fillRect(part[0].x, part[0].y, 30, 30);
-            ctx.strokeStyle = borderColor;
-            ctx.strokeRect(part[0].x, part[0].y, width -  space, height - space);
-        },
-
-        drawMapBorder: function(ctx, width, height, borderColor, borderWidth){
-        
-            // ctx.fillStyle = color;
-            ctx.lineWidth = borderWidth;
-            ctx.strokeStyle = borderColor;
-            
-            ctx.beginPath();
-            ctx.setLineDash([0,0]);
-            ctx.strokeRect(0, 0, width   , height );
-        },
-
-        drawStats: function(ctx, score, difficulty, consumed, combo, time, combotime){
-             ctx.textAlign = 'left'
-            // var opacity = 0.9;
-            combo = combo.toString();
-            //  console.log(combo.length)
-            ctx.fillStyle = '#fff';
-            ctx.font = "2rem Monospace";
-            ctx.fillText("Consumed: " + consumed ,20, 22);
-            ctx.fillText("Score: " + score, 230, 22);
-            ctx.fillText("Combo: x" + combo, 390, 22);
-            if(combo > 0){
-                ctx.fillText("["+ combotime +"]", 465 + (combo.length * 10), 22);
-            }
-            ctx.fillText("Time: " + time, 595, 22);
-            ctx.fillText("Difficulty: " + difficulty, 820, 22);
-
-            ctx.strokeStyle = '#cfcfcf';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.setLineDash([7, 5]);
-            ctx.moveTo(18, 33);
-            ctx.lineTo(990, 33);
-            ctx.stroke();
-            
-        },
-
-        drawCountToStart: function(ctx, countDown, coordy){
-            ctx.textAlign = 'left'
-            ctx.fillStyle = '#fff';
-            ctx.font = "3.5rem Monospace";
-            if(countDown == 0 ){
-                
-                ctx.fillText("GO!", coordy.x - 10, coordy.y - 20);
-            } else if (countDown == 'PAUSE'){
-                ctx.fillText(countDown, coordy.x - 35, coordy.y - 20);
-            }  else if (countDown == 'GAME OVER!'){
-                ctx.fillText(countDown, coordy.x - 65, coordy.y - 20);
-            }else {  
-                ctx.fillText(countDown, coordy.x, coordy.y - 20);
-            }
-
-           
-        },
-
-        drawMenu: function(ctx, coordy, prop){
-         
-            ctx.fillStyle = prop.color;
-            ctx.fillRect(coordy.x - prop.width / 2, coordy.y - prop.height / 2, prop.width , prop.height);
-            
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 4;
-            // ctx.fillStyle = '#dadada';
-            ctx.font = "3rem Monospace";
+    // console.log(snake);
+    // snk.draw = snk.draw || {};
+     
+    snk.fn.drawSnakeFromParts = function () {
+      
        
-            ctx.textAlign = prop.align;
-       
-
-            for(var i = 0; i < prop.list.length ; i++){
-                var text = ctx.measureText(prop.list[prop.index]);
-              
-                if(i == prop.index){
-                    ctx.fillStyle = '#fff';
-                     ctx.fillText(prop.list[i], coordy.x , prop.coordinates.y + 50 + prop.margin * i)
-                    ctx.beginPath();
-                    // ctx.setLineDash([7, 5]);
-                    ctx.moveTo(coordy.x - text.width /2 -20, ((coordy.y - prop.height / 2) + 80) + prop.margin * i );
-                    ctx.lineTo(coordy.x - text.width /2 -20, (coordy.y - prop.height / 2 + 105) + prop.margin * i);
-                    // ctx.lineTo((coordy.x - prop.width / 2) + 30, coordy.y - prop.height / 2);
-                    ctx.stroke();   
-                    // console.log('a')
-                } else {
-                    ctx.fillStyle = '#e4e4e4';
-                    ctx.fillText(prop.list[i], coordy.x , prop.coordinates.y + 50 + prop.margin * i)
-                }
-               
-                
+        for(var i = 0; i < this.data.snakeArry.snakeParts.length-1; i++){ 
+            if(this.stats.snakeLife != 1){
+                this.ctx.fillStyle = this.cgh.snakeDetails.deathColor;
+            } else {
+                this.ctx.fillStyle =  this.cfg.snakeDetails.color;
             }
-            ctx.fillStyle = '#fff';
-            ctx.font = "3.0rem Monospace";
-            ctx.fillText("S N A K E", coordy.x , prop.coordinates.y - 40)
+           
+            this.ctx.lineWidth = 1;
+            //  this.ctx.strokeStyle = bordColor;
+            this.ctx.fillRect(this.data.snakeArry.holdPartsDraw[i].x, this.data.snakeArry.holdPartsDraw[i].y, this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts);
+            //  this.ctx.strokeRect(this.data.snakeArry.holdPartsDraw[i].x  , this.data.snakeArry.holdPartsDraw[i].y  , width - space, height - space)
+            if(this.stats.snakeLife == 1 ){
+                this.ctx.fillStyle = 'crimson';
+                this.ctx.fillRect(this.data.snakeArry.holdPartsDraw[0].x , this.data.snakeArry.holdPartsDraw[0].y  , this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts );
+                // this.ctx.strokeStyle = 'crimson';
+                //  this.ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
+            } 
+        }   
 
+        for(var j = 0; j < this.data.snakeArry.holdPartsDraw.length ; j++){
+            if( j > 1 && this.data.snakeArry.snakeParts[j-2].x !== this.data.snakeArry.snakeParts[j].x && this.data.snakeArry.snakeParts[j-2].y !== this.data.snakeArry.snakeParts[j].y){ 
+                this.ctx.fillStyle = this.cfg.snakeDetails.color;
+                this.ctx.fillRect(this.data.snakeArry.snakeParts[j-1].x, this.data.snakeArry.snakeParts[j-1].y, this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts);
+                //  this.ctx.fillRect(snake.data.snakeParts[part.length-2].x, snake.data.snakeParts[part.length-2].y, width - space, height - space);
+                //  this.ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
+            }
+        } 
+        
+    };
 
-            /* ------ MENU BORDER ------ */
+    snk.fn.drawFood = function(){
+        this.ctx.fillStyle = this.cfg.snakeFood.color;
+        // this.ctx.strokeStyle = bordColor;
+        this.ctx.lineWidth = 1;
+        this.ctx.fillRect(this.data.snakeArry.foodCoordi[0].x , this.data.snakeArry.foodCoordi[0].y , this.cfg.snakeFood.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeFood.height - this.cfg.snakeDetails.spaceBetweenParts);
+        // this.ctx.fillRect(this.data.snakeArry.foodCoordi[0].x, this.data.snakeArry.foodCoordi[0].y, 30, 30);
+        this.ctx.strokeStyle = this.cfg.snakeFood.borderColor;
+        this.ctx.strokeRect(this.data.snakeArry.foodCoordi[0].x, this.data.snakeArry.foodCoordi[0].y, this.cfg.snakeFood.width -  this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeFood.height - this.cfg.snakeDetails.spaceBetweenParts);
+    };
 
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            // ctx.setLineDash([7, 5]);
-            ctx.moveTo(coordy.x - prop.width / 2, (coordy.y - prop.height / 2) + 30 );
-            ctx.lineTo((coordy.x - prop.width / 2), coordy.y - prop.height / 2);
-            ctx.lineTo((coordy.x - prop.width / 2) + 30, coordy.y - prop.height / 2);
-            ctx.stroke();
-
-
-            ctx.beginPath();
-            // ctx.setLineDash([7, 5]);
-            ctx.moveTo(coordy.x + prop.width / 2, (coordy.y - prop.height / 2) + 30 );
-            ctx.lineTo((coordy.x + prop.width / 2), coordy.y - prop.height / 2);
-            ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
-            ctx.stroke();
-
-
+    snk.fn.drawMapBorder = function(){
+        
+        // this.ctx.fillStyle = color;
+        this.ctx.lineWidth = this.cfg.canvasMap.borderWidth;
+        this.ctx.strokeStyle = this.cfg.canvasMap.borderColor;
             
-            ctx.beginPath();
-            // ctx.setLineDash([7, 5]);
-            ctx.moveTo(coordy.x + prop.width / 2, (coordy.y + prop.height / 2) - 60 );
-            ctx.lineTo((coordy.x + prop.width / 2), coordy.y + prop.height / 2  - 30);
-            ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y + prop.height / 2 - 30);
-            ctx.stroke();
+        this.ctx.beginPath();
+        this.ctx.setLineDash([0,0]);
+        this.ctx.strokeRect(0, 0, this.cfg.canvas.width, this.cfg.canvas.height );
+    };
 
-            ctx.beginPath();
-            // ctx.setLineDash([7, 5]);
-            ctx.moveTo(coordy.x - prop.width / 2, (coordy.y + prop.height / 2) - 60 );
-            ctx.lineTo((coordy.x - prop.width / 2), coordy.y + prop.height / 2 - 30);
-            ctx.lineTo((coordy.x - prop.width / 2) + 30, coordy.y + prop.height / 2 - 30);
-            ctx.stroke();
+    snk.fn.drawStats = function(){
+        this.ctx.textAlign = 'left';
+        // var opacity = 0.9;
+        // this.stats.combo = this.stats.combo.toString();
+        
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = '2rem Monospace';
+        this.ctx.fillText('Consumed: ' + this.stats.consumed ,20, 22);
+        this.ctx.fillText('Score: ' + this.stats.score, 230, 22);
+        this.ctx.fillText('Combo: x' + this.stats.combo, 390, 22);
+        if(this.stats.combo > 0){
+            this.ctx.fillText('['+ this.data.changes.comboTime +']', 465 + (this.stats.combo.toString().length * 10), 22);
+        }
+        this.ctx.fillText('Time: ' + this.stats.time, 595, 22);
+        this.ctx.fillText('Difficulty: ' + this.cfg.gameSettings.difficultyLevel, 820, 22);
 
+        this.ctx.strokeStyle = '#cfcfcf';
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo(18, 33);
+        this.ctx.lineTo(990, 33);
+        this.ctx.stroke();
+            
+    };
 
-
-            // ctx.beginPath();
-            // // ctx.setLineDash([7, 5]);
-            // ctx.moveTo(coordy.x - prop.width / 2, (coordy.y + prop.height / 2) );
-            // ctx.lineTo((coordy.x + prop.width / 2), coordy.y +prop.height / 2);
-            // // ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
-            // ctx.stroke();
-
-            // ctx.beginPath();
-            // // ctx.setLineDash([7, 5]);
-            // ctx.moveTo(coordy.x - prop.width / 2, (coordy.y -  prop.height / 2) );
-            // ctx.lineTo((coordy.x + prop.width / 2), coordy.y -prop.height / 2);
-            // // ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
-            // ctx.stroke();
-
-            // ctx.fillRect(coordy.x, coordy.y, 5, 5);
-
-
-            // ctx.fillRect(coordy.x, coordy.y, 1, 300);
-            // ctx.fillRect(coordy.x, coordy.y, 1, -300);
-            // ctx.fillRect(coordy.x, coordy.y, 300, 1);
-            // ctx.fillRect(coordy.x, coordy.y, -300, 1);
+    snk.fn.drawCountToStart = function(countDown){
+        this.ctx.textAlign = 'left';
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = '3.5rem Monospace';
+        if(this.data.gameSettings.gameCountDownToStart == 0 ){
+                
+            this.ctx.fillText('GO!', this.cfg.canvas.center.x - 10, this.cfg.canvas.center.y - 20);
+        } else if (countDown == 'PAUSE'){
+            this.ctx.fillText(countDown, this.cfg.canvas.center.x - 35, this.cfg.canvas.center.y - 20);
+        }  else if (countDown == 'GAME OVER!'){
+            this.ctx.fillText(countDown, this.cfg.canvas.center.x - 65, this.cfg.canvas.center.y - 20);
+        }else {  
+            this.ctx.fillText(countDown, this.cfg.canvas.center.x, this.cfg.canvas.center.y - 20);
         }
 
-        // drawBonusItmes: function(part, ctx, width, height, color, bordColor, space){
+           
+    };
 
+    snk.fn.drawMenu = function(){
+         
+        this.ctx.fillStyle = this.cfg.ui.menu.color;
+        this.ctx.fillRect(this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2, this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2, this.cfg.ui.menu.width , this.cfg.ui.menu.height);
+            
+        this.ctx.textAlign = this.cfg.ui.menu.align;
+
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = '2.6rem Monospace';
+        if(this.menu.tree.length == 1){
+            this.ctx.fillText('S N A K E', this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
+        } else {
+            this.ctx.fillText(this.menu.tree[this.menu.tree.length-1].name.split('').join(String.fromCharCode(8202)), this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40); 
+        }
+
+
+        this.ctx.strokeStyle = '#fff';
+        this.ctx.lineWidth = 4;
+        // this.ctx.fillStyle = '#dadada';
+        this.ctx.font = '2.9rem Monospace';
+       
+       
+    
+        for(var i = 0; i < this.menu.lists.length ; i++){
+            // console.log(this.cfg.ui.menu.list);
+            var text = this.ctx.measureText(this.menu.lists[this.menu.index].name);
+
+            // if(this.menu.selected !== 'none'){
+                
+            // }
+            if(i === this.menu.index ){
+                if(this.menu.selected === false){
+                    this.ctx.font = '2.7rem Monospace';
+                    if(this.menu.lists[i].available === false){
+                        this.ctx.fillStyle = 'gray';
+                    } else {
+                        this.ctx.fillStyle = '#fff';
+                    }
+                   
+                    this.ctx.fillText(this.menu.lists[i].name, this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + 50 + this.cfg.ui.menu.margin * i);
+                    
+                    this.ctx.beginPath();
+                    // this.ctx.setLineDash([7, 5]);
+                    this.ctx.moveTo(this.cfg.canvas.center.x - text.width / 2 - 20, ((this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2) + 80) + this.cfg.ui.menu.margin * i );
+                    this.ctx.lineTo(this.cfg.canvas.center.x - text.width / 2 - 20, (this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2 + 105) + this.cfg.ui.menu.margin * i);
+                    // this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2) + 30, this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2);
+                    this.ctx.stroke();   
+                } else {
+                    this.ctx.fillStyle = '#fff';
+                    this.ctx.fillRect(this.cfg.canvas.center.x - text.width / 2 -20, ((this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2) + 78)+ this.cfg.ui.menu.margin * i, text.width + 40 , 29);
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = '2.7rem Monospace';
+                    this.ctx.fillText(this.menu.lists[i].name, this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + 50 + this.cfg.ui.menu.margin * i); 
+                }
+              
+                // console.log('a')
+            } else if(this.menu.lists[i].available === false){
+                this.ctx.font = '2.7rem Monospace';
+                this.ctx.fillStyle = 'gray';
+                this.ctx.fillText(this.menu.lists[i].name, this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + 50 + this.cfg.ui.menu.margin * i);
+   
+            } else {
+                this.ctx.font = '2.7rem Monospace';
+                this.ctx.fillStyle = '#e4e4e4';
+                this.ctx.fillText(this.menu.lists[i].name, this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + 50 + this.cfg.ui.menu.margin * i);
+        
+                
+            }
+               
+                
+        }
+        // if(this.menu.lists[this.menu.lists-1].show === true){
+        //     this.ctx.fillText('Back', this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + 50 + this.cfg.ui.menu.margin * this.menu.lists.length );
+               
         // }
 
 
+        /* ------ MENU BORDER ------ */
+
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo(this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2, (this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2) + 30 );
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2), this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2);
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2) + 30, this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2);
+        this.ctx.stroke();
 
 
-        /* ---- for later purpose---- */
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo(this.cfg.canvas.center.x + this.cfg.ui.menu.width / 2, (this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2) + 30 );
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.menu.width / 2), this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2);
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.menu.width / 2) - 30, this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2);
+        this.ctx.stroke();
+
+
+            
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo(this.cfg.canvas.center.x + this.cfg.ui.menu.width / 2, (this.cfg.canvas.center.y + this.cfg.ui.menu.height / 2) - 60 );
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.menu.width / 2), this.cfg.canvas.center.y + this.cfg.ui.menu.height / 2  - 30);
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.menu.width / 2) - 30, this.cfg.canvas.center.y + this.cfg.ui.menu.height / 2 - 30);
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo(this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2, (this.cfg.canvas.center.y + this.cfg.ui.menu.height / 2) - 60 );
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2), this.cfg.canvas.center.y + this.cfg.ui.menu.height / 2 - 30);
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2) + 30, this.cfg.canvas.center.y + this.cfg.ui.menu.height / 2 - 30);
+        this.ctx.stroke();
+
+
+
+        // ctx.beginPath();
+        // // ctx.setLineDash([7, 5]);
+        // ctx.moveTo(coordy.x - prop.width / 2, (coordy.y + prop.height / 2) );
+        // ctx.lineTo((coordy.x + prop.width / 2), coordy.y +prop.height / 2);
+        // // ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
+        // ctx.stroke();
+
+        // ctx.beginPath();
+        // // ctx.setLineDash([7, 5]);
+        // ctx.moveTo(coordy.x - prop.width / 2, (coordy.y -  prop.height / 2) );
+        // ctx.lineTo((coordy.x + prop.width / 2), coordy.y -prop.height / 2);
+        // // ctx.lineTo((coordy.x + prop.width / 2) - 30, coordy.y - prop.height / 2);
+        // ctx.stroke();
+
+        // ctx.fillRect(coordy.x, coordy.y, 5, 5);
+
+
+        // ctx.fillRect(coordy.x, coordy.y, 1, 300);
+        // ctx.fillRect(coordy.x, coordy.y, 1, -300);
+        // ctx.fillRect(coordy.x, coordy.y, 300, 1);
+        // ctx.fillRect(coordy.x, coordy.y, -300, 1);
+    };
+
+    // drawBonusItmes: function(part, ctx, width, height, color, bordColor, space){
+
+    // }
+
+
+
+
+    /* ---- for later purpose---- */
     //     drawTurn: function(i, ctx, width, height, color, bordColor){
     //         ctx.fillStyle = color;
     //         ctx.strokeStyle = bordColor;
@@ -272,22 +313,22 @@ var _Snake = (function (root, snake){
     //             ctx.fillRect(snake.data.snakeParts[i-1].x -8 , snake.data.snakeParts[i-1].y -8, 5, 5);
     //         }
     //     }
-    };
+    
 
     // public method
-    snake.draw = {
-        snakeFromParts: snakeDrawFunctions.drawSnakeFromParts,
-        food: snakeDrawFunctions.drawFood,
-        mapBorder: snakeDrawFunctions.drawMapBorder,
-        stats: snakeDrawFunctions.drawStats,
-        countToStart: snakeDrawFunctions.drawCountToStart,
-        menu: snakeDrawFunctions.drawMenu,
-    }
+    // snk.fn draw= {
+    //     snakeFromParts: snakeDrawFunctions.drawSnakeFromParts,
+    //     food: snakeDrawFunctions.drawFood,
+    //     mapBorder: snakeDrawFunctions.drawMapBorder,
+    //     stats: snakeDrawFunctions.drawStats,
+    //     countToStart: snakeDrawFunctions.drawCountToStart,
+    //     menu: snakeDrawFunctions.drawMenu,
+    // };
     // snake.draw = snakeDrawFunctions.drawSnakeFromParts;
     // snake.drawFood = snakeDrawFunctions.drawFood;
     // snake.drawMapBorder = snakeDrawFunctions.drawMapBorder;
     // snake.drawStats = snakeDrawFunctions.drawStats;
     // snake.drawCountToStart = snakeDrawFunctions.drawCountToStart;
     // snake.drawMenu = snakeDrawFunctions.drawMenu;
-    return snake;
-})(this, _Snake || {}); 
+    return snk;
+})(this, Snake || {}); 

@@ -1,296 +1,246 @@
-/* Snake Core */
-/* Copyright genesis-hub */
-
-var _Snake = (function (root, snake){
-
+var Snake = (function(root, snk){
     'use strict';
-    console.log("%cSNAKE GAME 🐍", "color: green; font-size: 30px;");
+    console.log(window);
+    console.log('%cSNAKE GAME 🐍', 'color: green; font-size: 30px;');
+    
+    var CONFIG;
+    var cfgPath = '../data/cfg.json';
 
+    // var loadSettings;
     // add browser support
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-    var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;  
-
+    // eslint-disable-next-line no-unused-vars
+    var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+   
     var toStr = Object.prototype.toString, // used for shorthand
-        astr = "[object Array]";// used to comparison
-  
-    var speedup = 2;
-    // set interval
-    var myAnimateReq;
+        astr = '[object Array]'; // used to comparison
 
-    var myInerval,
-        interval = 10;
-    var timeSpentInterval;
-
-    // for set combo countdown method
-    var comboTimeInterval;
-
-    // get canvas element
-    var canvasElem = document.getElementById("game_canvas");
-    // set canvas to '2D'
-    var ctx = canvasElem.getContext('2d');
-        //set cavas height and width
-        canvasElem.width = 1000;
-        canvasElem.height = 700;
-
-    // object for hold the time spent in game 
-    var timeSpent = {
-        h: 0,
-        m: 0,
-        s: 0,
+    // creating game
+    var GameCreate = function(cfg){
+        // get game config 
+        this.cfg = JSON.parse(cfg);
+        this.stats = this.cfg.gameStats;
+        // this.menu.cfg = this.cfg;
+        this.initGame();
+        console.log(this);
     };
- 
-    // snake details like color, width, height
-    var snakeDetails = {
-        borderColor: "#1d1d1d",
-        color: "#dedddd", //#dedddd
-        width: 30,
-        height: 30,
-        velocity: 2,
-        score: 0,
-        length: 5+1, // add 1 for property display
-        spaceBetweenParts: 6,
-        snakeLife: 1,
-    };
-
-    var gameStarted = false;
-    var gameCountDownToStart = 3;
-    var gameCountDownInterval;
-
-    // game statistics to display
-    var gameStats = {
-        consumed: 0,
-        score: 0,
-        difficultyLevel: 'Normal',
-        time: '00:00:00',
-        combo: 0,
-        comboTime: 5,
-        opacity: 1
-    }
-
-    // food color, width, height etc
-    var foodDetails = {
-        width: 30,
-        height: 30,
-        color: 'crimson',
-        borderColor:'#101010',
-        // blinkTime: 5,
-    };
-
-  
-
-    // variable for combo time countdown
-    var comboTime = gameStats.comboTime;
-
-    // map details
-    var canvasMap = {
-        borderWidth: 5,
-        borderColor: '#cfcfcf'
-    }
-
-    // get cavnas rows and columns
-    var canvasRows = Math.floor((canvasElem.width ) / snakeDetails.width);
-    var canvasCols = Math.floor((canvasElem.height ) / snakeDetails.height);
-
-    // number to determine how much to move points to be aligned
-    // TODO: add if modulo = 0, ??? hmmm
-    var numbersToMovePoints = {
-        x: (canvasElem.width % canvasRows / 2)  + (snakeDetails.spaceBetweenParts / 2),
-        y: (canvasElem.height % canvasCols / 2) + (snakeDetails.spaceBetweenParts / 2)
-    }
-
-    // get the center of canvas 
-    var getCenterOfCanvas = {
-        x: Math.floor(canvasRows / 2 ) * snakeDetails.width + numbersToMovePoints.x,
-        y: Math.floor(canvasCols / 2 ) * snakeDetails.height +  numbersToMovePoints.y,
-    }; 
-
-    var uiProperties = {
-        menu: {
-            show: true,
-            index: 0,
-            width: 300,
-            height: 400,
-            color: '#1d1d1d', //#212121
-            coordinates: {
-                x: getCenterOfCanvas.x - 300 / 2,
-                y: getCenterOfCanvas.y - 300 / 2
-            },
-            list: ['New Game', 'Continue', 'History', 'Options', 'Leaderboards'],
-            margin: 50,
-            align: 'center',
-        }
-    }
-
-    snake.changeMenuIndex = function(e){
-
-        if(e > 0 && uiProperties.menu.index < 4 ){
-            uiProperties.menu.index += e;
-        } else if( e < 0 && uiProperties.menu.index > 0) {
-            uiProperties.menu.index += e;
-        }
-        console.log(uiProperties.menu.index)
-       
-    }
    
+  
+    GameCreate.prototype = snk.fn = {
+        length: 0,
+        // game initilization  
+        initGame: function(){
+            // variables created with the config for further action
+            this.setConfig();
+            // create snake 
+            this.createSnake(this.cfg.snakeDetails.length);
+            // crate canvas element
+            this.createCanvas();
 
-    var snakeTab = []; // hold snake parts
-    var holdPrevPosition = []; // hold parts to draw
-    var foodHolder = []; // food holder
+            this.createFood();
+            this.setMenuProto();
+            this.menu.proto.showSettings(this.cfg.ui.menu.lists);
+            // this.menu.proto.loadSettings(loadSettings),
+            // this.setDefaultSetting(this.cfg.ui.menu.lists);
+            // set event to control snake 
+            this.setEventListener();
 
-    // all current data / informations of the snake
-    snake.data = {
-        directions: {
-            v: 0,
-            h: -1,
+            this.data.gameInterval.myAnimateReq = requestAnimationFrame(this.initDraw.bind(this));
         },
-        gameStatus: false,
-        position: {
-            previous: {
-                x: 0,
-                y: 0
-            },
-            current: {
-                x: 0,
-                y: 0
+
+        initDraw: function(){
+            if(this.data.gameStatus == true || this.data.gameStatus == false ){ // safety
+                this.clearCanvas();
+                if(this.data.gameStatus == true){
+                    this.drawFood();
+                }
+                if(this.data.gameStarted == false && this.data.gameStatus == true){
+                    this.drawCountToStart();
+                }
+                if(this.data.gameStatus == false && this.data.gameStarted == false && this.stats.snakeLife == 1 ){
+                    this.drawCountToStart('PAUSE');
+                } else if(this.stats.snakeLife == 0 ) {
+                    this.drawCountToStart('GAME OVER!');
+                }
+
+
+                this.drawSnakeFromParts();
+                this.drawStats();
+
+                this.drawMapBorder();
+                if(this.data.gameStarted == false){
+                    this.drawMenu();
+                }
+             
+                requestAnimationFrame(this.initDraw.bind(this));  
             }
         },
-        snakeParts: snakeTab,
-    };
-
-    var newGame = function(){
-        return new GameSnake();
-    }
-
-
-    var GameSnake = function(){
-        this.create = function(){
-
-        }
-    }
-
-   
-    // var x = function(){
-    //     return new GameEngine;
-    // }
-
-    // var GameEngine = function(){
-        
-    // }
-
-    // GameEngine.prototype = {
-    //     aaa: function(){}
-    // };
-
-    // snake.OP = GameEngine;
-    // all snake functionalities
-    var snakeFunctionalities = {
-         /* For each part of snake call function "drawSnakeFromPart" */
-        initSnake: function (){
-            if(snake.data.gameStatus == true || snake.data.gameStatus == false ){ // safety
-                snakeFunctionalities.clearCanvas(); 
-                if(snake.data.gameStatus == true){
-                    snake.draw.food(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, foodDetails.borderColor, snakeDetails.spaceBetweenParts);
-                }
-                if(gameStarted == false && snake.data.gameStatus == true){
-                    snake.draw.countToStart(ctx, gameCountDownToStart, getCenterOfCanvas);
-                } 
-                if(snake.data.gameStatus == false && gameStarted == false && snakeDetails.snakeLife == 1 ){
-                    snake.draw.countToStart(ctx, 'PAUSE', getCenterOfCanvas);
-                } else if(snakeDetails.snakeLife == 0 ) {
-                    snake.draw.countToStart(ctx, 'GAME OVER!', getCenterOfCanvas);
-                }
-
-              
-
-
-                snake.draw.snakeFromParts(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, snakeDetails.color, snakeDetails.borderColor , snakeDetails.spaceBetweenParts, snakeDetails.snakeLife);
-                snake.draw.stats(ctx, snakeDetails.score, gameStats.difficultyLevel, gameStats.consumed, gameStats.combo, gameStats.time, comboTime);
-                snake.draw.mapBorder(ctx, canvasElem.width, canvasElem.height, canvasMap.borderColor, canvasMap.borderWidth);
-                  if(gameStarted == false){
-                    snake.draw.menu(ctx, getCenterOfCanvas, uiProperties.menu);
-                }
-                requestAnimationFrame(snakeFunctionalities.initSnake);
-            }
-        },
-    
-        /* create snake in center of canvas */
-        create: function(x){
-          
-            var len = x;
-            // snakeTab.length = 0;
-            for (let i = 0; i < len; i++) {
-                snakeTab.push({
-                    x: getCenterOfCanvas.x + (snakeDetails.width * i) - (Math.floor((len-1)/2) * snakeDetails.width),
-                    y: getCenterOfCanvas.y + snakeDetails.height,
-                });
+        // splice: function(){},
+        // variables created with the config for further action
+        setConfig: function(){
+            this.data = {
+                snakeArry: {
+                    snakeParts: [],
+                    holdPartsDraw: [],
+                    foodCoordi: [],
+                },    
+                directions: {
+                    v: 0,
+                    h: -1
+                },
+                gameStatus: false,
+                gameStarted: false,
+                position: {
+                    previous: {
+                        x: 0,
+                        y: 0
+                    },
+                    current: {
+                        x: 0,
+                        y: 0
+                    }
+                },
+                changes: {
+                    timeSpent: {
+                        h: 0,
+                        m: 0,
+                        s: 0
+                    },
+                },
+                gameInterval: {
+                    gameCountDownToStart: 3,
+                    gameCountDownInterval: null,
+                    timeSpentInterval: null,
+                    myAnimateReq: null,
+                    myInerval: null,
+                    interval: 10,
+                    comboTimeInterval: null,
+                },
+                gameSettings: this.cfg.gameSettings,
             };
-            // do deep copy of snakeTab
-            this.copyArrayD(snakeTab, holdPrevPosition);
+            
+            this.menu = {
+                index: this.cfg.ui.menu.index,
+                lists: this.cfg.ui.menu.lists,
+                show: true,
+                tree: [this.cfg.ui.menu.lists],
+                selected: false,
+              
+              
+            },
+   
+            this.cfg.canvas.rows = Math.floor((this.cfg.canvas.width ) / this.cfg.snakeDetails.width);
+            this.cfg.canvas.cols = Math.floor((this.cfg.canvas.height ) / this.cfg.snakeDetails.height);
 
-            // do necessary methods
-            snake.updatePositions.previous();
-            snakeFunctionalities.createFood();
-           
+            this.cfg.canvas.numbersToMovePoints = {
+                x: (this.cfg.canvas.width % this.cfg.canvas.rows / 2)  + (this.cfg.snakeDetails.spaceBetweenParts / 2),
+                y: (this.cfg.canvas.height % this.cfg.canvas.cols / 2) + (this.cfg.snakeDetails.spaceBetweenParts / 2)
+            };
+
+            this.cfg.canvas.center = {
+                x: Math.floor(this.cfg.canvas.rows / 2 ) * this.cfg.snakeDetails.width + this.cfg.canvas.numbersToMovePoints.x,
+                y: Math.floor(this.cfg.canvas.cols / 2 ) * this.cfg.snakeDetails.height +  this.cfg.canvas.numbersToMovePoints.y
+            }; 
         },
 
+        createCanvas: function(){
+            // get canvas element
+            this.canvas = document.getElementById('game_canvas');
+            // set canvas to '2D'
+            this.ctx = this.canvas.getContext('2d');
+            // set width and height from game config
+            this.canvas.width = this.cfg.canvas.width;
+            this.canvas.height = this.cfg.canvas.height;
+        },
 
-        addPartToArray: function(){
-            snakeTab.push({x: snakeTab[snakeTab.length-2].x , y: snakeTab[snakeTab.length-2].y});
-            holdPrevPosition.push({x: holdPrevPosition[holdPrevPosition.length-2].x, y: holdPrevPosition[holdPrevPosition.length-2].y })
-       },
+        createSnake: function(x){
+            var len = x;
+            var i;
+            var tab = [];
+            for( i = 0; i < len; i++) {
+                tab.push({
+                    x: this.cfg.canvas.center.x + (this.cfg.snakeDetails.width * i) - (Math.floor((len-1)/2) * this.cfg.snakeDetails.width),
+                    y: this.cfg.canvas.center.y + this.cfg.snakeDetails.height,
+                });
+            }
+            // do deep copy of tab
+            this.data.snakeArry.snakeParts = tab;
+            // this.copyArrayD(tab);
+            // console.table( tab);
+            // var copy = []
+            this.data.snakeArry.holdPartsDraw = this.copyArrayD(tab, []);
+            // console.table(this.data.snakeArry.holdPartsDraw);
+            // this.data.snakeArry.holdPartsDraw = holdPar;
+            // do necessary methods
+            this.prePosition();
+            this.currPosition();
+            // snakeFunctionalities.createFood();
+        },
+
+        // creating food for snake
+        createFood: function(){
+            var food = this.randomCoordinates();
+            this.data.changes.comboTime = this.data.gameSettings.comboTime;
+            this.data.snakeArry.foodCoordi = [];
+            return this.data.snakeArry.foodCoordi.push(food);
+        },
 
         // method for smooth draw snake
         changeCoordinatesOfParts: function(){
-            if(gameStarted == true){
-                if(snakeTab[0].x !== (holdPrevPosition[0].x) || snakeTab[0].y !==  holdPrevPosition[0].y) {
-                    for(var i = 0; i < holdPrevPosition.length; i++){
-                        var x = snakeTab[i].x - holdPrevPosition[i].x;
-                        var y = snakeTab[i].y - holdPrevPosition[i].y;
-                        
-                        if(y == 0 ){ //x <= 20 && x !== 0 
-                            holdPrevPosition[i].x += (x < 0) ? -snakeDetails.velocity : snakeDetails.velocity; 
-                        };
+            if(this.data.gameStarted == true){
+                if(this.data.snakeArry.snakeParts[0].x !== this.data.snakeArry.holdPartsDraw[0].x || this.data.snakeArry.snakeParts[0].y !==  this.data.snakeArry.holdPartsDraw[0].y) {
+                    for(var i = 0; i < this.data.snakeArry.holdPartsDraw.length; i++){
+                        var x = this.data.snakeArry.snakeParts[i].x - this.data.snakeArry.holdPartsDraw[i].x;
+                        var y = this.data.snakeArry.snakeParts[i].y - this.data.snakeArry.holdPartsDraw[i].y;
+                       
+
+                        if(y == 0 ){ //x <= 20 && x !== 0
+                            this.data.snakeArry.holdPartsDraw[i].x += (x < 0) ? -this.cfg.gameSettings.speed : this.cfg.gameSettings.speed;
+                        }
 
                         if(x == 0){ //y <= 20 && y !== 0
-                            holdPrevPosition[i].y += (y < 0) ? -snakeDetails.velocity : snakeDetails.velocity;
-                        };
+                            this.data.snakeArry.holdPartsDraw[i].y += (y < 0) ? -this.cfg.gameSettings.speed : this.cfg.gameSettings.speed;
+                        }
 
                         //check if snake eaten food
-                        if(snakeFunctionalities.eat(foodHolder)){
-                            snakeFunctionalities.addPartToArray();
-                            snakeFunctionalities.createFood();
-                            snakeFunctionalities.score();
-                        };
-                    };
-                    
+                        if(this.eat(this.data.snakeArry.foodCoordi)){ 
+                            this.addPartToArray();
+                            this.createFood();
+                            this.score();
+                        }
+                    }
                 } else {
+                    var j = this.data.snakeArry.snakeParts.length-1;
+                    for(j; j > 0; j--){
+                        this.data.snakeArry.snakeParts[j].x += ((this.data.snakeArry.snakeParts[j-1].x - this.data.snakeArry.snakeParts[j].x));
+                        this.data.snakeArry.snakeParts[j].y += ((this.data.snakeArry.snakeParts[j-1].y - this.data.snakeArry.snakeParts[j].y));
+                    }
+                   
+                    this.data.snakeArry.snakeParts[0].x += (this.data.directions.h  * this.cfg.snakeDetails.width );
+                    this.data.snakeArry.snakeParts[0].y += (this.data.directions.v  * this.cfg.snakeDetails.height );
+                    // if(this.cfg.snakeDetails.velocity < speedup){
+                    //     this.cfg.snakeDetails.velocity = speedup;
+                    // }
 
-                    var i = snakeTab.length-1;
-                    for(i; i > 0; i--){
-                        snakeTab[i].x += ((snakeTab[i-1].x - snakeTab[i].x));
-                        snakeTab[i].y += ((snakeTab[i-1].y - snakeTab[i].y));
-                    };
-                    
-                    snakeTab[0].x += (snake.data.directions.h  * snakeDetails.width );
-                    snakeTab[0].y += (snake.data.directions.v  * snakeDetails.height );
-                    if(snakeDetails.velocity < speedup){
-                        snakeDetails.velocity = speedup;
-                    };
-                    
-                    snakeFunctionalities.changeCoordinatesOfParts(); 
-                };
+                    this.changeCoordinatesOfParts();
+                }
 
                 // check if the snake ate himself or hit the map border
-                if(snake.data.gameStatus == true){
-                    snakeFunctionalities.checkIfSnakeDead();
-                } 
+                if(this.data.gameStatus == true){
+                    this.checkIfSnakeDead();
+                }
             }
 
         },
+        
+        addPartToArray: function(){
+            this.data.snakeArry.snakeParts.push({x: this.data.snakeArry.snakeParts[this.data.snakeArry.snakeParts.length-2].x , y: this.data.snakeArry.snakeParts[this.data.snakeArry.snakeParts.length-2].y});
+            this.data.snakeArry.holdPartsDraw.push({x: this.data.snakeArry.holdPartsDraw[this.data.snakeArry.holdPartsDraw.length-2].x, y: this.data.snakeArry.holdPartsDraw[this.data.snakeArry.holdPartsDraw.length-2].y });
+        },
 
-        // clear cabvas
+        // clear canvas
         clearCanvas: function(){
-            ctx.clearRect(3, 3, canvasElem.width - 5, canvasElem.height - 5 );
+            this.ctx.clearRect(3, 3, this.cfg.canvas.width - 5, this.cfg.canvas.height - 5 );
         },
 
         // deep copy, used to copy array to draw
@@ -303,33 +253,23 @@ var _Snake = (function (root, snake){
                         this.copyArrayD(from[i], into[i]);
                     } else {
                         into[i] = from[i];
-                    }; 
-                };
-            };
+                    }
+                }
+            }
             return into;
         },
-
-        // creating food for snake 
-        createFood: function(){
-            console.log('food')
-            var food = snakeFunctionalities.randomCoordinates();
-            comboTime = gameStats.comboTime;
-            foodHolder = []; 
-            return foodHolder.push(food);
-        },
-
         // method to check if snake eaten the food
         eat: function(food){
-            var dis = this.checkDist(food, holdPrevPosition);
+            var dis = this.checkDist(food, this.data.snakeArry.holdPartsDraw);
             if(dis.x < 25 && dis.y < 25 || dis.x == 0 &&  dis.y == 0){
 
-                clearInterval(comboTimeInterval);
-                comboTimeInterval = setInterval(snakeFunctionalities.timerCountdown, 1000);
+                clearInterval(this.data.gameInterval.comboTimeInterval);
+                this.data.gameInterval.comboTimeInterval = setInterval(this.timerCountdown.bind(this), 1000);
                 return true;
             } else {
                 return false;
-            };
-            
+            }
+
         },
 
         // check distance between snake and food
@@ -341,311 +281,229 @@ var _Snake = (function (root, snake){
             return dist;
         },
 
-        // check if snake ate himself or hits the map border 
+        // check if snake ate himself or hits the map border
         checkIfSnakeDead: function(){
-        
-            var len = holdPrevPosition.length - 2;
+
+            var len = this.data.snakeArry.holdPartsDraw.length - 2;
             // himself
             for(len; len > 1; len--){ //i; i < len; i++
-                var x = Math.abs(holdPrevPosition[0].x - holdPrevPosition[len].x);
-                var y = Math.abs(holdPrevPosition[0].y - holdPrevPosition[len].y);
+                var x = Math.abs(this.data.snakeArry.holdPartsDraw[0].x - this.data.snakeArry.holdPartsDraw[len].x);
+                var y = Math.abs(this.data.snakeArry.holdPartsDraw[0].y - this.data.snakeArry.holdPartsDraw[len].y);
 
-                if( x < 15 && y < 15 ){;
-                    snakeFunctionalities.gameStop();
+                if( x < 15 && y < 15 ){
+                    this.gameStop();
                     this.clearCanvas();
-                    // snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-                    snake.draw.stats(ctx, snakeDetails.score, gameStats.difficultyLevel, gameStats.consumed, gameStats.combo, gameStats.time, comboTime);
-                    snakeDetails.snakeLife = 0;
-                };
+                    // snake.draw(snakeArry.holdPartsDraw,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                    this.drawStats();
+                    this.stats.snakeLife = 0;
+                }
 
-            };
+            }
             // map
-            if(snakeTab[0].x < 8 || snakeTab[0].y > 668 || snakeTab[0].x > 968  || snakeTab[0].y < 33){
-                 snakeFunctionalities.gameStop();
+            if(this.data.snakeArry.snakeParts[0].x < 8 || this.data.snakeArry.snakeParts[0].y > 668 || this.data.snakeArry.snakeParts[0].x > 968  || this.data.snakeArry.snakeParts[0].y < 33){
+                this.gameStop();
                 this.clearCanvas();
-                // snake.draw(holdPrevPosition,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
-                snake.draw.stats(ctx, snakeDetails.score, gameStats.difficultyLevel, gameStats.consumed, gameStats.combo, gameStats.time, comboTime);
-                snakeDetails.snakeLife = 0;
-            };
-        },
-        
-        // create random coordinates for the food or others items which will be draw in canvas
-        randomCoordinates: function(){
-            var coordinates = {
-                x: (Math.floor((Math.random() * canvasRows)) * snakeDetails.width ) + numbersToMovePoints.x,
-                y: (Math.floor((Math.random() * (canvasCols - 1) + 1) )* snakeDetails.height ) + numbersToMovePoints.y
-            };
-            var len = snakeTab.length-1;
-            // checks if the created coordinates already exist
-            for(len; len >= 0; len--){
-                if(coordinates.x == snakeTab[len].x && coordinates.y == snakeTab[len].y){
-                    return this.randomCoordinates();
-                } ;
-                if(foodHolder.length > 0){
-                    if (coordinates.x == foodHolder[0].x && coordinates.y == foodHolder[0].y){
-                        return this.randomCoordinates();
-                    };
-                };
-            };
-
-            return coordinates;
-        },
-
-        // counting 'score' 
-        score: function(){
-            gameStats.consumed+=1;
-            snakeDetails.score = snakeDetails.score + (5 * ((gameStats.combo == 0 )? 1 : gameStats.combo)) ;
-            gameStats.combo += 2;
+                // snake.draw(snakeArry.holdPartsDraw,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
+                this.drawStats();
+                this.stats.snakeLife = 0;
+            }
         },
 
         timerCountdown: function(){
             // console.log('d')
-            if(snake.data.gameStatus == true, gameStarted == true){
-                if(comboTime > 1){
-                    comboTime -= 1;
+            if(this.data.gameStatus == true, this.data.gameStarted == true){
+                if(this.data.changes.comboTime > 1){
+                    this.data.changes.comboTime -= 1;
                 } else {
-                    clearInterval(comboTimeInterval);
-                    gameStats.combo = 0;
-                    comboTime = gameStats.comboTime;
- 
-                };
-            };
+                    clearInterval(this.data.gameInterval.comboTimeInterval);
+                    this.stats.combo = 0;
+                    this.data.changes.comboTime = this.data.gameSettings.comboTime;
+
+                }
+            }
         },
 
+        // create random coordinates for the food or others items which will be draw in canvas
+        randomCoordinates: function(){
+            var coordinates = {
+                x: (Math.floor((Math.random() * this.cfg.canvas.rows)) * this.cfg.snakeDetails.width ) + this.cfg.canvas.numbersToMovePoints.x,
+                y: (Math.floor((Math.random() * (this.cfg.canvas.cols - 1) + 1) )* this.cfg.snakeDetails.height ) + this.cfg.canvas.numbersToMovePoints.y
+            };
+            var len = this.data.snakeArry.snakeParts.length-1;
+            // checks if the created coordinates already exist
+            for(len; len >= 0; len--){
+                if(coordinates.x == this.data.snakeArry.snakeParts[len].x && coordinates.y == this.data.snakeArry.snakeParts[len].y){
+                    return this.randomCoordinates();
+                } 
+                if(this.data.snakeArry.foodCoordi.length > 0){
+                    if (coordinates.x == this.data.snakeArry.foodCoordi[0].x && coordinates.y == this.data.snakeArry.foodCoordi[0].y){
+                        return this.randomCoordinates();
+                    }
+                }
+            }
+
+            return coordinates;
+        },
+
+
+        forEach: function(){
+
+        },
         // method which count spent time
         timeSpent: function(){
-            
-            if(snake.data.gameStatus == true && gameStarted == true){
+
+            if(this.data.gameStatus == true && this.data.gameStarted == true){
                 var setTwoDigits = function (number){
                     return (number < 10 ? '0' : '') + number;
                 };
 
-                if(timeSpent.s < 59){
-                    timeSpent.s += 1;
+                if(this.data.changes.timeSpent.s < 59){
+                    this.data.changes.timeSpent.s += 1;
                 } else {
-                    timeSpent.m += 1;
-                    timeSpent.s = 0;
-                };
-                
-                if(timeSpent.m == 60){
-                    timeSpent.m = 0;
-                    timeSpent.h +=1;
-                };
+                    this.data.changes.timeSpent.m += 1;
+                    this.data.changes.timeSpent.s = 0;
+                }
 
-                if(timeSpent.h == 24){
-                    return gameStats.time = 'ERROR :)';
-                };
-                return gameStats.time = setTwoDigits(timeSpent.h) + ':' + setTwoDigits(timeSpent.m) + ':' + setTwoDigits(timeSpent.s);
-            };
+                if(this.data.changes.timeSpent.m == 60){
+                    this.data.changes.timeSpent.m = 0;
+                    this.data.changes.timeSpent.h +=1;
+                }
 
-        },
-
-        gameStart: function(){
-            console.log("%cGame Started", "color: blue; font-size: 15px");
-            snake.data.gameStatus = true;
-            gameStarted = false;
-            myInerval = setInterval(snakeFunctionalities.changeCoordinatesOfParts, interval);
-            gameCountDownInterval = setInterval(snakeFunctionalities.gameCountToStart, 1000);
-            comboTimeInterval = setInterval(snakeFunctionalities.timerCountdown, 1000);
-            if(timeSpentInterval == undefined){
-                timeSpentInterval = setInterval(function(){
-                    snakeFunctionalities.timeSpent();
-                    // snakeFunctionalities.timeFood();
-                }, 1000); // interval ony for 1 sec delay
+                if(this.data.changes.timeSpent.h == 24){
+                    return this.stats.time = 'ERROR :)';
+                }
+                return this.stats.time = setTwoDigits(this.data.changes.timeSpent.h) + ':' + setTwoDigits(this.data.changes.timeSpent.m) + ':' + setTwoDigits(this.data.changes.timeSpent.s);
             }
-        }, 
 
-        gameStop: function(){
-            console.log("%cGame Stopped", "color: crimson; font-size: 15px");
-            snake.data.gameStatus = false;
-            gameCountDownToStart = 3;
-            gameStarted = false;
-            clearInterval(gameCountDownInterval);
-            
-            clearInterval(myInerval);
-            clearInterval(comboTimeInterval);
-            // cancelAnimationFrame(myAnimateReq);
         },
 
         gameCountToStart: function(){
-             if(gameStarted == false){
-                console.log(gameCountDownToStart);
-                if(gameCountDownToStart > 0){
-                     gameCountDownToStart += -1;
+            if(this.data.gameStarted == false){
+                console.log(this.data.gameInterval.gameCountDownToStart);
+                if(this.data.gameInterval.gameCountDownToStart > 0){
+                    this.data.gameInterval.gameCountDownToStart += -1;
                 } else {
-                    clearInterval(gameCountDownInterval);
-                    gameStarted = true;
-                    snake.data.gameStatus = true;
-                    gameCountDownToStart = 3;
+                    clearInterval(this.data.gameInterval.gameCountDownInterval);
+                    this.data.gameStarted = true;
+                    // snake.data.gameStatus = true;
+                    this.data.gameInterval.gameCountDownToStart = 3;
                 }
-            }    
+            }
+        },
+
+        // counting 'score'
+        score: function(){
+            this.stats.consumed+=1;
+            this.stats.score += (5 * ((this.stats.combo == 0 )? 1 : this.stats.combo)) ;
+            this.stats.combo += 2;
+        },
+
+        prePosition: function(){
+            this.data.position.previous.x = this.data.snakeArry.snakeParts[0].x;
+            this.data.position.previous.y = this.data.snakeArry.snakeParts[0].y;
+        },
+
+        currPosition: function(){
+            this.data.position.current.x = this.data.snakeArry.snakeParts[0].x;
+            this.data.position.current.y = this.data.snakeArry.snakeParts[0].y;
+        },
+
+        gameStart: function(){
+            console.log('%cGame Started', 'color: blue; font-size: 15px');
+            this.data.gameStatus = true;
+            this.data.gameStarted = false;
+            this.data.gameInterval.myInerval = setInterval(this.changeCoordinatesOfParts.bind(this), this.data.gameInterval.interval);
+            this.data.gameInterval.gameCountDownInterval = setInterval(this.gameCountToStart.bind(this), 1000);
+            this.data.gameInterval.comboTimeInterval = setInterval(this.timerCountdown.bind(this), 1000);
+            if(this.data.gameInterval.timeSpentInterval == null){
+                this.data.gameInterval.timeSpentInterval = setInterval(function(){
+                    this.timeSpent();
+                    // snakeFunctionalities.timeFood();
+                }.bind(this), 1000); // interval ony for 1 sec delay
+            }
+        },
+
+        gameStop: function(){
+            console.log('%cGame Stopped', 'color: crimson; font-size: 15px');
+            this.data.gameStatus = false;
+            this.data.gameInterval.gameCountDownToStart = 3;
+            this.data.gameStarted = false;
+            clearInterval(this.data.gameInterval.gameCountDownInterval);
+            // this.data.gameCountDownInterval = null;
+            clearInterval(this.data.gameInterval.myInerval);
+            clearInterval(this.data.gameInterval.comboTimeInterval);
+            // cancelAnimationFrame(this.data.myAnimateReq);
+            
+        },
+
+        
+        setEventListener: function(){
+            root.addEventListener('keydown', function(e){
+                this.control(e);
+            }.bind(this));
+        },
+
+        //change game status
+        toggleGameStatus: function (){
+            if(this.data.gameStatus == false && this.stats.snakeLife === 1) {
+
+                
+                // comboTimeInterval = setInterval(snakeFunctionalities.timerCountdown, 1000);
+                this.gameStart();
+
+
+
+
+            } else {
+                if(this.stats.snakeLife === 0){
+                    console.log('a');
+                    // snakeFunctionalities.newGame();
+                    // snakeFunctionalities.gameStart();
+                }
+                console.log(this);
+
+                this.gameStop();
+            }
+        },
+
+        //check if you can change direction
+        directionChecker: function(up){
+            var calc;
+            if (up == 'update'){
+                this.currPosition();
+
+                // snake.updatePositions.current();
+            }
+            if (this.data.directions.h == -1 || this.data.directions.h  == 1) {
+                calc = Math.abs(this.data.position.previous.x - this.data.position.current.x);
+            } else {
+                calc = Math.abs(this.data.position.previous.y - this.data.position.current.y);
+            }
+            return calc;
         },
 
         newGame: function(){
-            cancelAnimationFrame(myAnimateReq);
-            timeSpent.h = 0;
-            timeSpent.m = 0;
-            timeSpent.s = 0;
-            
-            snakeDetails.snakeLife = 1;
-            // snakeTab = []; // hold snake parts
-            // holdPrevPosition = []; // hold parts to draw
-            // foodHolder = []; // food holder
-           
-            // snakeFunctionalities.create(6);
-            // var gameCountDownToStart = 3;
-         
-
-          
-            gameStats.consumed = 0;
-           
-            gameStats.score = 0;
-            gameStats.difficultyLevel = 'Normal';
-            gameStats.time = '00:00:00';
-            gameStats.combo = 0;
-            // gameStats.comboTime: 5,
-         
-        },
-
-        // addBonusItems: function(item){
-        //     if(item == 'speedUp'){
-        //         snake.drawBonusItmes(ctx,)
-        //     }
-        // }
-        
-    };
-
-    
-  
-    // test function
-    snake.testFood = function(){
-        snakeFunctionalities.createFood();
-         snake.draw.food(foodHolder, ctx,  foodDetails.width, foodDetails.height, foodDetails.color, snakeDetails.spaceBetweenParts);
-               
-    }
-    
-
-
-     GameSnake.prototype = snakeFunctionalities;
-
-    snake.op = GameSnake;
-    /* ---- public snake functionalities ----- */
-    // update snake positions prev and current
-    snake.updatePositions = {
-        previous: function(){
-            snake.data.position.previous.x = snakeTab[0].x;
-            snake.data.position.previous.y = snakeTab[0].y;
-        },
-        current: function(){
-            snake.data.position.current.x = snakeTab[0].x;
-            snake.data.position.current.y = snakeTab[0].y;
-        }
-    };
-    
-    // change game status
-    snake.toggleGameStatus = function (){
-        if(snake.data.gameStatus == false && snakeDetails.snakeLife == 1) {
-            myAnimateReq = requestAnimationFrame(snakeFunctionalities.initSnake);
-            // comboTimeInterval = setInterval(snakeFunctionalities.timerCountdown, 1000);
-            snakeFunctionalities.gameStart();
-
-            // setTimeout(function() {
-            //     console.log("%cGame Started", "color: blue; font-size: 15px");
-            //     snake.data.gameStatus = true;
-               
-            //     myInerval = setInterval(snakeFunctionalities.changeCoordinatesOfParts, interval);
-            //     comboTimeInterval = setInterval(snakeFunctionalities.comboTime, 1000);
-            //     if(timeSpentInterval == undefined){
-            //         timeSpentInterval = setInterval(function(){
-            //             snakeFunctionalities.timeSpent();
-            //             // snakeFunctionalities.timeFood();
-            //         }, 1000); // interval ony for 1 sec delay
-            //     }
-            // }, 1000);
-            
-                
-           
-        } else {
-                if(snakeDetails.snakeLife == 0){
-                    console.log('a')
-                    snakeFunctionalities.newGame();
-                    snakeFunctionalities.gameStart();
-                }
-            // gameCountDownToStart = 3;
-            // clearInterval(comboTimeInterval);
-            // gameStarted = false;
-            snakeFunctionalities.gameStop();
-            // cancelAnimationFrame(myAnimateReq);
-             
-            // console.log("%cGame Stopped", "color: crimson; font-size: 15px");
-            // snake.data.gameStatus = false;
-            // cancelAnimationFrame(myAnimateReq);
-            // clearInterval(myInerval);                
-            // clearInterval(comboTimeInterval);
-            // clearInterval(foodCreateInterval);
-            
+            snk.newGame();
         }
     };
 
-    //check if you can change direction 
-    snake.directionChecker = function(up){
-        var calc;
-        if (up == "update"){
-            snake.updatePositions.current();
-        }   
-        if (snake.data.directions.h == -1 || snake.data.directions.h  == 1) {
-            calc = Math.abs(snake.data.position.previous.x - snake.data.position.current.x);
+    // create new game 
+    snk.newGame = function(){
+        // load config if no exist 
+        if(CONFIG === undefined){
+           
+            snk.loadJSON(cfgPath, function(res){
+                CONFIG = res;
+                // console.log(CONFIG);
+                return new GameCreate(res);
+            });
         } else {
-            calc = Math.abs(snake.data.position.previous.y - snake.data.position.current.y)
-        };
-        return calc;
-    };
 
-    // change snake volecity for test for now
-    snake.changeVelocity = function(x){
-        speedup += x;
-        console.log(this);
-        console.log(snakeDetails.velocity);
-        console.log(speedup);
-        //interval += x;
-       // console.log(interval)
+            return new GameCreate(CONFIG);
+        }
        
-        
     };
 
-    // test 
-    snake.gameStart = function(){
-        // console.log(myAnimateReq)
-        myAnimateReq = requestAnimationFrame(snakeFunctionalities.initSnake);
-
-    }
-
-    snake.gameStop = function(){
-        
-    }
-
-    snake.gameCancel= function() {
-        cancelAnimationFrame(myAnimateReq);
-        snakeFunctionalities.clearCanvas();
-        console.log(myAnimateReq);
-    }
-
-    snake.cl = snakeFunctionalities.clearCanvas;
-
-
-     snakeFunctionalities.create(snakeDetails.length);
-    // create snake when DOM is ready
-    root.addEventListener('DOMContentLoaded', function(){
-        // snakeFunctionalities.create(snakeDetails.length);
-        snake.gameStart()
-    });
     
-    // snake.returnValue = function (e){
-    //     if(e == 'uiProperties.menu.index'){
-    //         return uiProperties.menu.index;
-    //     }
-    //     // console.log(x)
-    //     return x;
-    // }
-    return snake;
-})(this, _Snake || {}); 
+    return snk;
+})(this, Snake || {});

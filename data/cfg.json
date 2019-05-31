@@ -1,0 +1,176 @@
+{
+    "canvas": {
+        "id": "game_canvas",
+        "name": "Snake",
+        "width": 1000,
+        "height": 700
+    },
+    "gameStatusList": ["GO!", "PAUSE", "GAME OVER!"],
+    "ui": {
+        "menu": {
+            "index": 0,
+            "show": true,
+            "width": 300,
+            "height": 400,
+            "color": "#1d1d1d",
+            "coordinates": {
+                "x": 338,
+                "y": 188
+            },
+            "lists": 
+                 [{
+                    "id": 0,
+                    "name": "New Game",
+                    "subMenu": false,
+                    "available": true,
+                    "function": "newGame"
+                }, 
+                {
+                    "id": 1,
+                    "name": "Continue",
+                    "subMenu": false,
+                    "available": false,
+                    "function": "continueGame"
+                }, 
+                {   
+                    "id": 2,
+                    "name": "FAQ",
+                    "subMenu": false,
+                    "available": true,
+                    "function": "showHistory"
+                }, {
+                    "id": 3,
+                    "name": "Options",
+                    "subMenu": [{
+                        "id": 0,
+                        "name": "Sound:",
+                        "change": ["On", "Off"],
+                        "default": "On",
+                        "subMenu": false,
+                        "function": "toggleSound"
+                        
+                    },
+                    {
+                        "id": 1,
+                        "name": "Volume:",
+                        "change": [50],
+                        "default": "50%",
+                        "subMenu": false,
+                        "function": "changeVolume"
+                        
+                    },
+                    {
+                        "id": 2,
+                        "name": "Difficulty:",
+                        "change": ["Easy", "Normal", "Hard"],
+                        "default":"Normal",
+                        "choiceChange": 2,
+                        "subMenu": false,
+                        "function": "changeDifficulty"
+                        
+                    },
+                    {
+                        "id": 3,
+                        "name": "Keyboard",
+                        "subMenu": [
+                        {
+                            "id": 0,
+                            "name": "Accpet:",
+                            "change": ["Enter", "Spacebar"],
+                            "default": "Enter",
+                            "subMenu": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Control:",
+                            "change": ["Arrows", "WASD"],
+                            "default": "Arrows",
+                            "subMenu": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 1,
+                            "name": "Back:",
+                            "change": ["Esc", "Backspace"],
+                            "default": "Backspace",
+                            "subMenu": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Stop:",
+                            "change": ["Spacebar", "Esc"],
+                            "default": "Spacebar",
+                            "subMenu": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 4,
+                            "name": "<--",
+                            "subMenu": false,
+                            "available": true,
+                            "function": "backMenu"
+                        }],
+                        "available": true,
+                        "function": false
+                    }, 
+                    {
+                        "id": 4,
+                        "name": "<--",
+                        "subMenu": false,
+                        "available": true,
+                        "function": "backMenu"
+                    }],
+                    "available": true,
+                    "function": false
+                },
+                {
+                    "id": 4,
+                    "name": "Leaderboards",
+                    "subMenu": false,
+                    "function": "showLeaderBoards"
+                }],
+        
+            "margin": 50,
+            "align": "center"
+        }
+    },
+    "snakeDetails": {
+        "borderColor": "#1d1d1d",
+        "color": "#dedddd",
+        "width": 30,
+        "height": 30,
+        "length": 6,
+        "deathColor": "#000000",
+        "spaceBetweenParts": 6
+    },
+    "snakeFood": {
+        "width": 30,
+        "height": 30,
+        "color": "crimson",
+        "borderColor": "#101010"
+    },
+    "canvasMap": {
+        "borderWidth": 5,
+        "borderColor": "#cfcfcf"
+    },
+    "gameStats": {
+        "consumed": 0,
+        "score": 0,
+        "time": "00:00:00",
+        "combo": 0,
+        "snakeLife": 1
+    },
+    "gameSettings": {
+        "difficultyLevel": "Normal",
+        "sound": "on", 
+        "volume": 50,
+        "comboTime": 5,
+        "speed": 2,
+        "control": "arrows",
+        "accept": "enter",
+        "stop": "spacebar",
+        "back": "backspace"
+    }
+}

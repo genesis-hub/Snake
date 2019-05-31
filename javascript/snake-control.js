@@ -1,22 +1,24 @@
+/* eslint-disable no-undef */
 
-var _Snake = (function(snk){
-    "use strict";
-
-    window.addEventListener('keydown', function(e){
-       
+var Snake = (function(snk){
+    'use strict';
+    
+    snk.fn.control = function(e){
+        // console.log(this);
+        //  console.log(e.keyCode);
         var key = e.keyCode;
         var calc;
-        if (key == 32 && snk.data.gameStatus == false) {
-          
-            snk.toggleGameStatus();
+        if (key == 32  && this.data.gameStatus == false) {
+            this.toggleGameStatus();
             return;
-        } else if (key == 32 && snk.data.gameStatus == true) {       // snk.UI.toggleUi();
-            snk.toggleGameStatus();
+        } 
+        if (key == 32 || key === 27 && this.data.gameStatus == true) {       // snk.UI.toggleUi();
+            this.toggleGameStatus();
             return;
-        };
+        }
        
         // check if you can change direction
-        var calc = snk.directionChecker('update');
+        calc = this.directionChecker('update');
         
         //  h -1 left
         //  v -1 up
@@ -24,69 +26,82 @@ var _Snake = (function(snk){
         //  v 1 down
 
         /* ------ SNAKE CONTROLLING ----- */
-        if (calc >= 20 && snk.data.gameStatus == true) {
+        if (calc >= 20 && this.data.gameStatus == true) {
             // left
             if(key == 37 || key == 65){
-                if(snk.data.directions.h !== 1 && snk.data.directions.h !== -1){
-                    snk.data.position.previous.x = snk.data.snakeParts[0].x;
-                    snk.data.directions.v = 0;
-                    snk.data.directions.h = -1;  
+                if(this.data.directions.h !== 1 && this.data.directions.h !== -1){
+                    this.data.position.previous.x = this.data.snakeArry.snakeParts[0].x;
+                    this.data.directions.v = 0;
+                    this.data.directions.h = -1;  
                 }
                 return;
-            };
+            }
             // up
             if(key == 38 || key == 87){
-                if(snk.data.directions.v !== 1 && snk.data.directions.v !== -1){  
-                    snk.data.position.previous.y = snk.data.snakeParts[0].y;
-                    snk.data.directions.v = -1;
-                    snk.data.directions.h = 0;
+                if(this.data.directions.v !== 1 && this.data.directions.v !== -1){  
+                    this.data.position.previous.y = this.data.snakeArry.snakeParts[0].y;
+                    this.data.directions.v = -1;
+                    this.data.directions.h = 0;
                 }
                 return;
-            };
+            }
             // right
             if(key == 39 || key == 68) {
-                if(snk.data.directions.h !== -1 && snk.data.directions.h !== 1 ) { 
-                    snk.data.position.previous.x = snk.data.snakeParts[0].x;
-                    snk.data.directions.v = 0;
-                    snk.data.directions.h = 1;           
+                if(this.data.directions.h !== -1 && this.data.directions.h !== 1 ) { 
+                    this.data.position.previous.x = this.data.snakeArry.snakeParts[0].x;
+                    this.data.directions.v = 0;
+                    this.data.directions.h = 1;           
                 }
                 return;
-            };
+            }
             // down
             if(key == 40 || key == 83) {
-                if(snk.data.directions.v !== -1 && snk.data.directions.v !== 1  ){ 
-                    snk.data.position.previous.y = snk.data.snakeParts[0].y;
-                    snk.data.directions.v = 1;
-                    snk.data.directions.h = 0;
+                if(this.data.directions.v !== -1 && this.data.directions.v !== 1  ){ 
+                    this.data.position.previous.y = this.data.snakeArry.snakeParts[0].y;
+                    this.data.directions.v = 1;
+                    this.data.directions.h = 0;
                 }
                 return;
-            };
+            }
 
         } else {
-            
+            /* ------ MENU CONTROLLING ----- */
+
+            if(key == 38){
+                this.menuControl('up');
+                return;
+            }
+            if(key == 40){
+                this.menuControl('down');
+                return;
+            }
+
+            if(key == 13){
+                this.menuControl('enter');
+                return;
+            }
+
+            if(key == 37){
+                this.menuControl('left');
+                return;
+            }
+            if(key == 39){
+                this.menuControl('right');
+                return;
+            }
+
+            if(key == 8 || key == 27){
+                this.menuControl('back');
+                return;
+            }
 
         }
 
 
 
-        /* ------ MENU CONTROLLING ----- */
-
-        if(key == 38){
         
-            snk.changeMenuIndex(-1)
-        }
-        if(key == 40){
-            snk.changeMenuIndex(+1)
-        }
 
-        if(key == 13){
-            
-        }
-
-
-
-
-         // for test 
+        // for test 
         if(key == 107){
             snk.changeVelocity(1);
         } else if(key == 109) {
@@ -94,22 +109,9 @@ var _Snake = (function(snk){
         }
 
 
-        // if(key == 38){
-        // //    var  x = snk.returnValue('uiProperties.menu.index');
-        // //    x++
-        // //    console.log(x)
-        
-        //     snk.changeMenuIndex(-1)
-        // }
-        // if(key == 40){
-        //     snk.changeMenuIndex(+1)
-        // }
+    };
 
-        // if(key == 13){
-
-        // }
-
-    },false);
-    
+  
+   
     return snk;
-})(_Snake || {});
+})(Snake || {});

@@ -42,6 +42,27 @@ body {
     transform: translate(-50%, -50%);
 }
 
+a:link, a:active, a:visited {
+    color: #e4e3e3;
+    text-decoration: none;
+}
 
 
+#footer {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    letter-spacing: -1px;
+    z-index: 1;
+    font-size: 1.3rem;
+    font-family: guide_font;
+    color: #cfcfcf;
+ }
 
+ #footer p {
+    
+ }

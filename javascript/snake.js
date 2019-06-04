@@ -40,31 +40,23 @@ var Snake = (function(root, snk){
         return lib;
     };
 
-
-
-
-
+    snk.localStorage = {
+        set: function(name, value){
+            localStorage.setItem(name, JSON.stringify(value));
+        },
+        get: function(name){
+            var get = localStorage.getItem(name);
+            return JSON.parse(get);
+        },
+        remove: function(name){
+            localStorage.removeItem(name);
+        }
+    };
    
     // initialization 
     snk.initGame = function(){
         root.addEventListener('DOMContentLoaded', function(){
-            if(snk.config === undefined){
-                // snk.loadJSON('../data/cfg.json', function(res){
-                    
-                //     snk.JSONfiles = {
-                //         cfg : JSON.parse(res)
-                //     }  // console.log(res);
-                   
-                //     // root.addEventListener('keydown', function(e){
-                //     //     snk.Game.control(e);
-                //     // }, false);
-
-                // });
-            }
-
-
             snk.newGame();
-
         }, false);
     };
 

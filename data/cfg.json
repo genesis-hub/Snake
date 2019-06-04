@@ -34,7 +34,7 @@
                 }, 
                 {   
                     "id": 2,
-                    "name": "FAQ",
+                    "name": "Guide",
                     "subMenu": false,
                     "available": true,
                     "function": "showHistory"
@@ -43,16 +43,16 @@
                     "name": "Options",
                     "subMenu": [{
                         "id": 0,
-                        "name": "Sound:",
-                        "change": ["On", "Off"],
-                        "default": "On",
+                        "name": "Sound",
+                        "change": ["on", "off"],
+                        "default": "on",
                         "subMenu": false,
                         "function": "toggleSound"
                         
                     },
                     {
                         "id": 1,
-                        "name": "Volume:",
+                        "name": "Volume",
                         "change": [50],
                         "default": "50%",
                         "subMenu": false,
@@ -61,10 +61,27 @@
                     },
                     {
                         "id": 2,
-                        "name": "Difficulty:",
-                        "change": ["Easy", "Normal", "Hard"],
-                        "default":"Normal",
+                        "name": "Difficulty",
+                        "change": ["easy", "normal", "hard"],
+                        "default": "normal",
                         "choiceChange": 2,
+                        "prop": {
+                            "easy": {
+                                "name": "easy",
+                                "comboTime": 8,
+                                "speed": 1
+                            },
+                            "normal": {
+                                "name": "normal",
+                                "comboTime": 5,
+                                "speed": 2
+                            },
+                            "hard": {
+                                "name": "hard",
+                                "comboTime": 3,
+                                "speed": 3
+                            }        
+                        },
                         "subMenu": false,
                         "function": "changeDifficulty"
                         
@@ -75,33 +92,33 @@
                         "subMenu": [
                         {
                             "id": 0,
-                            "name": "Accpet:",
-                            "change": ["Enter", "Spacebar"],
-                            "default": "Enter",
+                            "name": "Accept",
+                            "change": ["enter", "spacebar"],
+                            "default": "enter",
                             "subMenu": false,
                             "function": "setKey"
                         },
                         {
                             "id": 3,
-                            "name": "Control:",
-                            "change": ["Arrows", "WASD"],
-                            "default": "Arrows",
+                            "name": "Control",
+                            "change": ["arrows", "WASD"],
+                            "default": "arrows",
                             "subMenu": false,
                             "function": "setKey"
                         },
                         {
                             "id": 1,
-                            "name": "Back:",
-                            "change": ["Esc", "Backspace"],
-                            "default": "Backspace",
+                            "name": "Back",
+                            "change": ["esc", "backspace"],
+                            "default": "backspace",
                             "subMenu": false,
                             "function": "setKey"
                         },
                         {
                             "id": 2,
-                            "name": "Stop:",
-                            "change": ["Spacebar", "Esc"],
-                            "default": "Spacebar",
+                            "name": "Stop",
+                            "change": ["spacebar", "esc"],
+                            "default": "spacebar",
                             "subMenu": false,
                             "function": "setKey"
                         },
@@ -161,16 +178,5 @@
         "time": "00:00:00",
         "combo": 0,
         "snakeLife": 1
-    },
-    "gameSettings": {
-        "difficultyLevel": "Normal",
-        "sound": "on", 
-        "volume": 50,
-        "comboTime": 5,
-        "speed": 2,
-        "control": "arrows",
-        "accept": "enter",
-        "stop": "spacebar",
-        "back": "backspace"
-    }
+    } 
 }

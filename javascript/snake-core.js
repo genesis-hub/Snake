@@ -1,7 +1,6 @@
 var Snake = (function(root, snk){
     'use strict';
-    console.log(window);
-    console.log('%cSNAKE GAME 🐍', 'color: green; font-size: 30px;');
+    console.log('%cSNAKE GAME 🐍', 'color: green; font-size: 30px;', '@ Matthew');
     
     var CONFIG;
     var cfgPath = '../data/cfg.json';
@@ -19,30 +18,37 @@ var Snake = (function(root, snk){
     var GameCreate = function(cfg){
         // get game config 
         this.cfg = JSON.parse(cfg);
-        this.stats = this.cfg.gameStats;
-        // this.menu.cfg = this.cfg;
+        // snk.localStorage.remove('settings');
         this.initGame();
         console.log(this);
+        console.log('%cGame ready to start!', 'color: Green; font-size: 20px;');
     };
    
-  
     GameCreate.prototype = snk.fn = {
         length: 0,
         // game initilization  
         initGame: function(){
             // variables created with the config for further action
+            console.log('%cSetting config', 'color: Green; font-size: 20px;');
             this.setConfig();
-            // create snake 
+            //
+            this.setStats();
+            // 
+            this.loadSettings();
+            //
+            console.log('%cCreate snake', 'color: blue; font-size: 15px;');
             this.createSnake(this.cfg.snakeDetails.length);
             // crate canvas element
+            console.log('%cCreate canvas', 'color: blue; font-size: 15px;');
             this.createCanvas();
-
+            //
+            console.log('%cCreate food', 'color: blue; font-size: 15px;');
             this.createFood();
+            console.log('%cSetting Menu methods', 'color: Green; font-size: 15px;');
             this.setMenuProto();
-            this.menu.proto.showSettings(this.cfg.ui.menu.lists);
-            // this.menu.proto.loadSettings(loadSettings),
-            // this.setDefaultSetting(this.cfg.ui.menu.lists);
+
             // set event to control snake 
+            console.log('%cSetting event listener', 'color: green; font-size: 15px;');
             this.setEventListener();
 
             this.data.gameInterval.myAnimateReq = requestAnimationFrame(this.initDraw.bind(this));
@@ -51,31 +57,33 @@ var Snake = (function(root, snk){
         initDraw: function(){
             if(this.data.gameStatus == true || this.data.gameStatus == false ){ // safety
                 this.clearCanvas();
+
+                this.drawSnakeFromParts();
+
                 if(this.data.gameStatus == true){
                     this.drawFood();
                 }
-                if(this.data.gameStarted == false && this.data.gameStatus == true){
-                    this.drawCountToStart();
+                if(this.data.changes.gameStage == 'count'){
+                    this.drawCountToStart(this.data.gameInterval.gameCountDownToStart);
                 }
-                if(this.data.gameStatus == false && this.data.gameStarted == false && this.stats.snakeLife == 1 ){
-                    this.drawCountToStart('PAUSE');
-                } else if(this.stats.snakeLife == 0 ) {
-                    this.drawCountToStart('GAME OVER!');
+        
+                if(this.data.gameStarted == true || this.data.changes.gameStage == 'count'){
+                    this.drawStats();
                 }
 
-
-                this.drawSnakeFromParts();
-                this.drawStats();
 
                 this.drawMapBorder();
-                if(this.data.gameStarted == false){
+                if(this.data.changes.gameStage == 'gameover'){
+                    this.drawGameoverScoreBoard();
+                }
+                if(this.menu.show == true){
                     this.drawMenu();
                 }
              
                 requestAnimationFrame(this.initDraw.bind(this));  
             }
         },
-        // splice: function(){},
+        splice: Array.prototype.splice,
         // variables created with the config for further action
         setConfig: function(){
             this.data = {
@@ -84,10 +92,7 @@ var Snake = (function(root, snk){
                     holdPartsDraw: [],
                     foodCoordi: [],
                 },    
-                directions: {
-                    v: 0,
-                    h: -1
-                },
+
                 gameStatus: false,
                 gameStarted: false,
                 position: {
@@ -106,6 +111,7 @@ var Snake = (function(root, snk){
                         m: 0,
                         s: 0
                     },
+                    gameStage: 'gameover',
                 },
                 gameInterval: {
                     gameCountDownToStart: 3,
@@ -116,13 +122,13 @@ var Snake = (function(root, snk){
                     interval: 10,
                     comboTimeInterval: null,
                 },
-                gameSettings: this.cfg.gameSettings,
+                gameSettings: {}
             };
             
             this.menu = {
                 index: this.cfg.ui.menu.index,
                 lists: this.cfg.ui.menu.lists,
-                show: true,
+                show: false,
                 tree: [this.cfg.ui.menu.lists],
                 selected: false,
               
@@ -163,43 +169,40 @@ var Snake = (function(root, snk){
                     y: this.cfg.canvas.center.y + this.cfg.snakeDetails.height,
                 });
             }
-            // do deep copy of tab
+            this.data.directions = {
+                v: 0,
+                h: -1
+            };
             this.data.snakeArry.snakeParts = tab;
-            // this.copyArrayD(tab);
-            // console.table( tab);
-            // var copy = []
+            // do deep copy of tab
             this.data.snakeArry.holdPartsDraw = this.copyArrayD(tab, []);
-            // console.table(this.data.snakeArry.holdPartsDraw);
-            // this.data.snakeArry.holdPartsDraw = holdPar;
             // do necessary methods
             this.prePosition();
             this.currPosition();
-            // snakeFunctionalities.createFood();
         },
 
         // creating food for snake
         createFood: function(){
             var food = this.randomCoordinates();
-            this.data.changes.comboTime = this.data.gameSettings.comboTime;
+            this.data.changes.comboTime = this.data.difficultyProp.comboTime;
             this.data.snakeArry.foodCoordi = [];
             return this.data.snakeArry.foodCoordi.push(food);
         },
 
         // method for smooth draw snake
         changeCoordinatesOfParts: function(){
-            if(this.data.gameStarted == true){
+            if(this.data.gameStatus == true){
                 if(this.data.snakeArry.snakeParts[0].x !== this.data.snakeArry.holdPartsDraw[0].x || this.data.snakeArry.snakeParts[0].y !==  this.data.snakeArry.holdPartsDraw[0].y) {
                     for(var i = 0; i < this.data.snakeArry.holdPartsDraw.length; i++){
                         var x = this.data.snakeArry.snakeParts[i].x - this.data.snakeArry.holdPartsDraw[i].x;
                         var y = this.data.snakeArry.snakeParts[i].y - this.data.snakeArry.holdPartsDraw[i].y;
                        
-
                         if(y == 0 ){ //x <= 20 && x !== 0
-                            this.data.snakeArry.holdPartsDraw[i].x += (x < 0) ? -this.cfg.gameSettings.speed : this.cfg.gameSettings.speed;
+                            this.data.snakeArry.holdPartsDraw[i].x += (x < 0) ? -this.data.difficultyProp.speed :this.data.difficultyProp.speed;
                         }
 
                         if(x == 0){ //y <= 20 && y !== 0
-                            this.data.snakeArry.holdPartsDraw[i].y += (y < 0) ? -this.cfg.gameSettings.speed : this.cfg.gameSettings.speed;
+                            this.data.snakeArry.holdPartsDraw[i].y += (y < 0) ? -this.data.difficultyProp.speed :this.data.difficultyProp.speed;
                         }
 
                         //check if snake eaten food
@@ -218,9 +221,6 @@ var Snake = (function(root, snk){
                    
                     this.data.snakeArry.snakeParts[0].x += (this.data.directions.h  * this.cfg.snakeDetails.width );
                     this.data.snakeArry.snakeParts[0].y += (this.data.directions.v  * this.cfg.snakeDetails.height );
-                    // if(this.cfg.snakeDetails.velocity < speedup){
-                    //     this.cfg.snakeDetails.velocity = speedup;
-                    // }
 
                     this.changeCoordinatesOfParts();
                 }
@@ -232,7 +232,8 @@ var Snake = (function(root, snk){
             }
 
         },
-        
+
+        // add snake part after aeten food
         addPartToArray: function(){
             this.data.snakeArry.snakeParts.push({x: this.data.snakeArry.snakeParts[this.data.snakeArry.snakeParts.length-2].x , y: this.data.snakeArry.snakeParts[this.data.snakeArry.snakeParts.length-2].y});
             this.data.snakeArry.holdPartsDraw.push({x: this.data.snakeArry.holdPartsDraw[this.data.snakeArry.holdPartsDraw.length-2].x, y: this.data.snakeArry.holdPartsDraw[this.data.snakeArry.holdPartsDraw.length-2].y });
@@ -258,8 +259,10 @@ var Snake = (function(root, snk){
             }
             return into;
         },
+
         // method to check if snake eaten the food
         eat: function(food){
+
             var dis = this.checkDist(food, this.data.snakeArry.holdPartsDraw);
             if(dis.x < 25 && dis.y < 25 || dis.x == 0 &&  dis.y == 0){
 
@@ -283,7 +286,6 @@ var Snake = (function(root, snk){
 
         // check if snake ate himself or hits the map border
         checkIfSnakeDead: function(){
-
             var len = this.data.snakeArry.holdPartsDraw.length - 2;
             // himself
             for(len; len > 1; len--){ //i; i < len; i++
@@ -296,8 +298,9 @@ var Snake = (function(root, snk){
                     // snake.draw(snakeArry.holdPartsDraw,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                     this.drawStats();
                     this.stats.snakeLife = 0;
+                    this.data.changes.gameStage = 'gameover';
+                  
                 }
-
             }
             // map
             if(this.data.snakeArry.snakeParts[0].x < 8 || this.data.snakeArry.snakeParts[0].y > 668 || this.data.snakeArry.snakeParts[0].x > 968  || this.data.snakeArry.snakeParts[0].y < 33){
@@ -306,18 +309,25 @@ var Snake = (function(root, snk){
                 // snake.draw(snakeArry.holdPartsDraw,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                 this.drawStats();
                 this.stats.snakeLife = 0;
+                this.data.changes.gameStage = 'gameover';
+                
+            }
+            if(this.data.changes.gameStage =='gameover'){
+                this.cfg.ui.menu.lists[1].available = false;
             }
         },
 
+        // method for countdown comboTime
         timerCountdown: function(){
-            // console.log('d')
-            if(this.data.gameStatus == true, this.data.gameStarted == true){
+           
+            if(this.data.gameStatus == true && this.data.gameStarted == true){
                 if(this.data.changes.comboTime > 1){
                     this.data.changes.comboTime -= 1;
                 } else {
                     clearInterval(this.data.gameInterval.comboTimeInterval);
+                   
                     this.stats.combo = 0;
-                    this.data.changes.comboTime = this.data.gameSettings.comboTime;
+                    this.data.changes.comboTime = this.data.difficultyProp.comboTime;
 
                 }
             }
@@ -341,17 +351,11 @@ var Snake = (function(root, snk){
                     }
                 }
             }
-
             return coordinates;
         },
 
-
-        forEach: function(){
-
-        },
         // method which count spent time
         timeSpent: function(){
-
             if(this.data.gameStatus == true && this.data.gameStarted == true){
                 var setTwoDigits = function (number){
                     return (number < 10 ? '0' : '') + number;
@@ -374,44 +378,65 @@ var Snake = (function(root, snk){
                 }
                 return this.stats.time = setTwoDigits(this.data.changes.timeSpent.h) + ':' + setTwoDigits(this.data.changes.timeSpent.m) + ':' + setTwoDigits(this.data.changes.timeSpent.s);
             }
-
         },
 
+        // method for change difficulty property
+        difficultyLevelChanges: function(el){
+            el = el || this.data.gameSettings.difficulty;
+            this.data.difficultyProp = this.cfg.ui.menu.lists[3].subMenu[2].prop[el];
+            this.cfg.ui.menu.lists[1].available = false;
+            console.log(this.data.prop);
+        },
+
+        // method for countdown to start
         gameCountToStart: function(){
-            if(this.data.gameStarted == false){
+            if(this.data.gameStatus == false){
                 console.log(this.data.gameInterval.gameCountDownToStart);
                 if(this.data.gameInterval.gameCountDownToStart > 0){
                     this.data.gameInterval.gameCountDownToStart += -1;
                 } else {
                     clearInterval(this.data.gameInterval.gameCountDownInterval);
-                    this.data.gameStarted = true;
-                    // snake.data.gameStatus = true;
+                    // this.data.gameStarted = true;
+                    this.data.gameStatus = true;
+                    this.data.changes.gameStage = 'started';
                     this.data.gameInterval.gameCountDownToStart = 3;
+                    if(this.data.gameStarted == false){
+                        this.data.gameStarted = true;
+                    }
+                   
                 }
             }
         },
 
         // counting 'score'
         score: function(){
+           
             this.stats.consumed+=1;
             this.stats.score += (5 * ((this.stats.combo == 0 )? 1 : this.stats.combo)) ;
             this.stats.combo += 2;
+            if(this.stats.maxCombo < this.stats.combo){
+                this.stats.maxCombo = this.stats.combo;
+            }
+            this.stats.total = this.stats.score + this.stats.consumed * this.stats.maxCombo;
         },
 
+        // set previous positions
         prePosition: function(){
             this.data.position.previous.x = this.data.snakeArry.snakeParts[0].x;
             this.data.position.previous.y = this.data.snakeArry.snakeParts[0].y;
         },
 
+        // set current positions
         currPosition: function(){
             this.data.position.current.x = this.data.snakeArry.snakeParts[0].x;
             this.data.position.current.y = this.data.snakeArry.snakeParts[0].y;
         },
 
+        // start
         gameStart: function(){
             console.log('%cGame Started', 'color: blue; font-size: 15px');
-            this.data.gameStatus = true;
-            this.data.gameStarted = false;
+            // this.data.gameStatus = true;
+            this.data.changes.gameStage = 'count';
             this.data.gameInterval.myInerval = setInterval(this.changeCoordinatesOfParts.bind(this), this.data.gameInterval.interval);
             this.data.gameInterval.gameCountDownInterval = setInterval(this.gameCountToStart.bind(this), 1000);
             this.data.gameInterval.comboTimeInterval = setInterval(this.timerCountdown.bind(this), 1000);
@@ -421,22 +446,28 @@ var Snake = (function(root, snk){
                     // snakeFunctionalities.timeFood();
                 }.bind(this), 1000); // interval ony for 1 sec delay
             }
+            this.menu.show = false;
         },
 
+        // stop
         gameStop: function(){
             console.log('%cGame Stopped', 'color: crimson; font-size: 15px');
             this.data.gameStatus = false;
+            
             this.data.gameInterval.gameCountDownToStart = 3;
-            this.data.gameStarted = false;
+            // this.data.gameStarted = false;
             clearInterval(this.data.gameInterval.gameCountDownInterval);
             // this.data.gameCountDownInterval = null;
             clearInterval(this.data.gameInterval.myInerval);
             clearInterval(this.data.gameInterval.comboTimeInterval);
             // cancelAnimationFrame(this.data.myAnimateReq);
+            this.data.changes.gameStage = 'pause';
+            // this.menu.show = true;
+            this.menu.index = 1;
             
         },
 
-        
+        // add eventListener to the 'keydown'
         setEventListener: function(){
             root.addEventListener('keydown', function(e){
                 this.control(e);
@@ -445,22 +476,16 @@ var Snake = (function(root, snk){
 
         //change game status
         toggleGameStatus: function (){
-            if(this.data.gameStatus == false && this.stats.snakeLife === 1) {
-
-                
-                // comboTimeInterval = setInterval(snakeFunctionalities.timerCountdown, 1000);
+            if(this.data.changes.gameStage == 'unstarted' || this.data.changes.gameStage == 'pause' ) {
                 this.gameStart();
 
-
-
-
             } else {
-                if(this.stats.snakeLife === 0){
-                    console.log('a');
-                    // snakeFunctionalities.newGame();
-                    // snakeFunctionalities.gameStart();
-                }
-                console.log(this);
+                // if(this.stats.snakeLife === 0){
+                //     console.log('a');
+                //     // snakeFunctionalities.newGame();
+                //     // snakeFunctionalities.gameStart();
+                // }
+                // console.log(this);
 
                 this.gameStop();
             }
@@ -470,9 +495,8 @@ var Snake = (function(root, snk){
         directionChecker: function(up){
             var calc;
             if (up == 'update'){
-                this.currPosition();
-
                 // snake.updatePositions.current();
+                this.currPosition();
             }
             if (this.data.directions.h == -1 || this.data.directions.h  == 1) {
                 calc = Math.abs(this.data.position.previous.x - this.data.position.current.x);
@@ -482,8 +506,83 @@ var Snake = (function(root, snk){
             return calc;
         },
 
+        // load settings from localStorage if supports 
+        // set settings from localStorage or set default
+        loadSettings: function() {
+            if(typeof Storage !== 'undefined'){
+                console.log('%cBrowser supports "local​Storage".', 'color: #f9a825; font-size: 20px;');
+                if(snk.localStorage.get('settings') != null){
+                    console.log('%cLoading Settings...', 'color: black; font-size: 15px;');
+                    console.log(snk.localStorage.get('settings'));
+                    this.data.gameSettings = snk.localStorage.get('settings');
+                    this.setSettings(this.cfg.ui.menu.lists);
+                    console.log('%cLoading finished', 'color: black; font-size: 15px;');
+                }    
+                else {
+                    console.log('%cSetting the default settings..', 'color: black; font-size: 15px;');
+                    this.setSettings(this.cfg.ui.menu.lists);
+                    snk.localStorage.set('settings', this.data.gameSettings);
+                    console.log(snk.localStorage.get('settings'));
+                    console.log('%cSetting finished', 'color: black; font-size: 15px;');
+                }
+            } else {
+                console.log('%cBrowser not supports "local​Storage".', 'color: Crimson; font-size: 20px;');
+                console.log('%cYou can not save settings ;/', 'color: crimson; font-size: 20px;');
+                this.setSettings(this.cfg.ui.menu.lists);
+            }
+          
+        
+        },
+
+        // update localStorage
+        updateSettings: function(){
+            if(typeof Storage !== 'undefined'){
+                console.log('%cUpdate settings', 'color: black; font-size: 15px;');
+                snk.localStorage.set('settings', this.data.gameSettings);
+                console.log('%cDone', 'color: black; font-size: 15px;');
+            }
+        },
+
+        // set 'gameSettings' 
+        setSettings: function(e){
+            var len = e.length;
+            var i = 0;
+            for(i; i < len; i++){
+                if(e[i].subMenu !== false){
+                    for(var j = 0; j < e[i].subMenu.length; j++ ){
+                        if(e[i].subMenu[j].default){
+                            // set default settings
+                            if(!this.data.gameSettings[e[i].subMenu[j].name.toLowerCase()]){
+                                this.data.gameSettings[e[i].subMenu[j].name.toLowerCase()] = e[i].subMenu[j].default;
+                                e[i].subMenu[j].name += ': ' + e[i].subMenu[j].default;
+                            } else {
+                                // set settings from localStorage
+                                e[i].subMenu[j].name += ': ' + this.data.gameSettings[e[i].subMenu[j].name.toLowerCase()];
+                            }
+                            // set 'difficulty properties' 
+                            if(Object.keys(this.data.gameSettings)[j] === 'difficulty' && !this.data.difficultyProp){
+                                this.data.difficultyProp = this.cfg.ui.menu.lists[3].subMenu[2].prop[this.data.gameSettings.difficulty];
+                            }
+                        }
+                        if(e[i].subMenu[j].subMenu !== false){
+                            this.setSettings(e[i].subMenu);
+                        }
+                    }
+                    
+                }
+            }            
+        },
+
+        // set | reset game stats
+        setStats: function(){
+            return this.stats = this.copyArrayD(this.cfg.gameStats, {});
+        },
+
+        // start new game
         newGame: function(){
-            snk.newGame();
+            this.setStats();
+            this.createSnake(this.cfg.snakeDetails.length);
+            this.gameStart();
         }
     };
 
@@ -491,17 +590,13 @@ var Snake = (function(root, snk){
     snk.newGame = function(){
         // load config if no exist 
         if(CONFIG === undefined){
-           
             snk.loadJSON(cfgPath, function(res){
                 CONFIG = res;
-                // console.log(CONFIG);
                 return new GameCreate(res);
             });
         } else {
-
             return new GameCreate(CONFIG);
         }
-       
     };
 
     

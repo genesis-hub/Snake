@@ -43,10 +43,9 @@ body {
 }
 
 a:link, a:active, a:visited {
-    color: #e4e3e3;
+    color: #cacaca;
     text-decoration: none;
 }
-
 
 #footer {
     position: absolute;
@@ -60,9 +59,7 @@ a:link, a:active, a:visited {
     z-index: 1;
     font-size: 1.3rem;
     font-family: guide_font;
-    color: #cfcfcf;
+    color: #b9b9b9;
  }
 
- #footer p {
-    
- }
+

@@ -9,34 +9,42 @@ var Snake = (function (root, snk){
      
     snk.fn.drawSnakeFromParts = function () {
       
-       
-        for(var i = 0; i < this.data.snakeArry.snakeParts.length-1; i++){ 
-            if(this.stats.snakeLife != 1){
-                this.ctx.fillStyle = this.cgh.snakeDetails.deathColor;
-            } else {
-                this.ctx.fillStyle =  this.cfg.snakeDetails.color;
-            }
-           
-            this.ctx.lineWidth = 1;
-            //  this.ctx.strokeStyle = bordColor;
-            this.ctx.fillRect(this.data.snakeArry.holdPartsDraw[i].x, this.data.snakeArry.holdPartsDraw[i].y, this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts);
-            //  this.ctx.strokeRect(this.data.snakeArry.holdPartsDraw[i].x  , this.data.snakeArry.holdPartsDraw[i].y  , width - space, height - space)
-            if(this.stats.snakeLife == 1 ){
-                this.ctx.fillStyle = 'crimson';
-                this.ctx.fillRect(this.data.snakeArry.holdPartsDraw[0].x , this.data.snakeArry.holdPartsDraw[0].y  , this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts );
-                // this.ctx.strokeStyle = 'crimson';
-                //  this.ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
-            } 
-        }   
+        if(this.data.changes.gameStage === 'started' || this.data.changes.gameStage === 'count'){
 
-        for(var j = 0; j < this.data.snakeArry.holdPartsDraw.length ; j++){
-            if( j > 1 && this.data.snakeArry.snakeParts[j-2].x !== this.data.snakeArry.snakeParts[j].x && this.data.snakeArry.snakeParts[j-2].y !== this.data.snakeArry.snakeParts[j].y){ 
-                this.ctx.fillStyle = this.cfg.snakeDetails.color;
-                this.ctx.fillRect(this.data.snakeArry.snakeParts[j-1].x, this.data.snakeArry.snakeParts[j-1].y, this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts);
-                //  this.ctx.fillRect(snake.data.snakeParts[part.length-2].x, snake.data.snakeParts[part.length-2].y, width - space, height - space);
-                //  this.ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
-            }
-        } 
+            for(var i = 0; i < this.data.snakeArry.snakeParts.length-1; i++){ 
+                if(this.stats.snakeLife != 1){
+                    this.ctx.fillStyle = this.cfg.snakeDetails.deathColor;
+                } else {
+                    this.ctx.fillStyle =  this.cfg.snakeDetails.color;
+                }
+            
+                this.ctx.lineWidth = 1;
+                //  this.ctx.strokeStyle = bordColor;
+                this.ctx.fillRect(this.data.snakeArry.holdPartsDraw[i].x, this.data.snakeArry.holdPartsDraw[i].y, this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts);
+                //  this.ctx.strokeRect(this.data.snakeArry.holdPartsDraw[i].x  , this.data.snakeArry.holdPartsDraw[i].y  , width - space, height - space)
+                if(this.stats.snakeLife == 1 ){
+                    this.ctx.fillStyle = 'crimson';
+                    this.ctx.fillRect(this.data.snakeArry.holdPartsDraw[0].x , this.data.snakeArry.holdPartsDraw[0].y  , this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts );
+                    // this.ctx.strokeStyle = 'crimson';
+                    //  this.ctx.strokeRect(part[0].x , part[0].y  , width - space  , height - space );
+                } 
+            }   
+
+            for(var j = 0; j < this.data.snakeArry.holdPartsDraw.length ; j++){
+                if( j > 1 && this.data.snakeArry.snakeParts[j-2].x !== this.data.snakeArry.snakeParts[j].x && this.data.snakeArry.snakeParts[j-2].y !== this.data.snakeArry.snakeParts[j].y){ 
+                    // this.ctx.fillStyle = this.cfg.snakeDetails.color;
+                    if(this.stats.snakeLife != 1){
+                        this.ctx.fillStyle = this.cfg.snakeDetails.deathColor;
+                    } else {
+                        this.ctx.fillStyle =  this.cfg.snakeDetails.color;
+                    }
+            
+                    this.ctx.fillRect(this.data.snakeArry.snakeParts[j-1].x, this.data.snakeArry.snakeParts[j-1].y, this.cfg.snakeDetails.width - this.cfg.snakeDetails.spaceBetweenParts, this.cfg.snakeDetails.height - this.cfg.snakeDetails.spaceBetweenParts);
+                    //  this.ctx.fillRect(snake.data.snakeParts[part.length-2].x, snake.data.snakeParts[part.length-2].y, width - space, height - space);
+                    //  this.ctx.strokeRect(snake.data.snakeParts[i-1].x , snake.data.snakeParts[i-1].y , width - space , height - space );
+                }
+            } 
+        }
         
     };
 
@@ -72,10 +80,11 @@ var Snake = (function (root, snk){
         this.ctx.fillText('Score: ' + this.stats.score, 230, 22);
         this.ctx.fillText('Combo: x' + this.stats.combo, 390, 22);
         if(this.stats.combo > 0){
-            this.ctx.fillText('['+ this.data.changes.comboTime +']', 465 + (this.stats.combo.toString().length * 10), 22);
+            var text = this.ctx.measureText(this.stats.combo);
+            this.ctx.fillText('['+ this.data.changes.comboTime +']', 465 + text.width, 22);
         }
         this.ctx.fillText('Time: ' + this.stats.time, 595, 22);
-        this.ctx.fillText('Difficulty: ' + this.cfg.gameSettings.difficultyLevel, 820, 22);
+        this.ctx.fillText('Difficulty: ' + this.data.gameSettings.difficulty, 820, 22);
 
         this.ctx.strokeStyle = '#cfcfcf';
         this.ctx.lineWidth = 2;
@@ -84,38 +93,111 @@ var Snake = (function (root, snk){
         this.ctx.moveTo(18, 33);
         this.ctx.lineTo(990, 33);
         this.ctx.stroke();
+      
+    
+    };
+
+    snk.fn.drawGameoverScoreBoard = function(){
+
+        this.ctx.textAlign = this.cfg.ui.gameoverBoard.align;
+        this.ctx.font = '2.4rem Monospace';
+
+        this.cfg.ui.gameoverBoard.rowWidth = this.ctx.measureText('Consumed: ' + this.stats.consumed + ' ' + ' Score: ' + this.stats.score + ' '+ ' Max Combo: x' + this.stats.maxCombo).width;
+        this.cfg.ui.gameoverBoard.width = this.cfg.ui.gameoverBoard.rowWidth + this.cfg.ui.gameoverBoard.paddingLR;
+
+        this.ctx.setLineDash([0,0]);
+        this.ctx.fillStyle = this.cfg.ui.gameoverBoard.color;
+        this.ctx.fillRect(this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2, this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2 , this.cfg.ui.gameoverBoard.width, this.cfg.ui.gameoverBoard.height);
+        
+        this.ctx.fillStyle = '#fff';
+        this.ctx.fillText('G A M E O V E R', this.cfg.canvas.center.x , this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2 + 8);
+        this.ctx.fillText('Consumed: ' + this.stats.consumed + '  Score: ' + this.stats.score + '  Max Combo: x' + this.stats.maxCombo, this.cfg.canvas.center.x, this.cfg.canvas.center.y - (this.cfg.ui.gameoverBoard.height / 2 - this.cfg.ui.gameoverBoard.paddingTop));
+        this.ctx.fillText('Time: ' + this.stats.time + ' Difficulty: ' + this.data.gameSettings.difficulty, this.cfg.canvas.center.x , this.cfg.canvas.center.y - ((this.cfg.ui.gameoverBoard.height / 2 - this.cfg.ui.gameoverBoard.paddingTop) - this.cfg.ui.gameoverBoard.margin));
+        this.ctx.fillText('Total score: ' + this.stats.total, this.cfg.canvas.center.x, this.cfg.canvas.center.y - ((this.cfg.ui.gameoverBoard.height / 2 - this.cfg.ui.gameoverBoard.paddingTop) - this.cfg.ui.gameoverBoard.margin * 2));
+
+        /* ------ BUTTON ------ */
+    
+        this.ctx.fillRect(this.cfg.canvas.center.x - this.ctx.measureText('Next').width / 2 - 20, this.cfg.canvas.center.y - ((this.cfg.ui.gameoverBoard.height / 2 - this.cfg.ui.gameoverBoard.paddingTop) - this.cfg.ui.gameoverBoard.margin * 3.5) - 20 , this.ctx.measureText('Next').width + 40 , 27);
+        this.ctx.fillStyle = 'black';
+        this.ctx.fillText('NEXT', this.cfg.canvas.center.x, this.cfg.canvas.center.y - ((this.cfg.ui.gameoverBoard.height / 2 - this.cfg.ui.gameoverBoard.paddingTop) - this.cfg.ui.gameoverBoard.margin * 3.5) );
+    
+        /* ------ SCORE BORDER ------ */
+
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo((this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2) + 30);
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2) + 30, (this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.stroke();
+
+
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo((this.cfg.canvas.center.x + this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2) + 30);
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.gameoverBoard.width / 2) - 30, (this.cfg.canvas.center.y - this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.stroke();
+
+
             
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo((this.cfg.canvas.center.x + this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y + this.cfg.ui.gameoverBoard.height / 2) - 30);
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y + this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.lineTo((this.cfg.canvas.center.x + this.cfg.ui.gameoverBoard.width / 2) - 30, (this.cfg.canvas.center.y + this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.stroke();
+
+        this.ctx.beginPath();
+        // this.ctx.setLineDash([7, 5]);
+        this.ctx.moveTo((this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y + this.cfg.ui.gameoverBoard.height / 2) - 30);
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2), (this.cfg.canvas.center.y + this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.lineTo((this.cfg.canvas.center.x - this.cfg.ui.gameoverBoard.width / 2) + 30, (this.cfg.canvas.center.y + this.cfg.ui.gameoverBoard.height / 2));
+        this.ctx.stroke();
+
+
+    
+        // this.ctx.lineWidth = 2;
+        
+        // this.ctx.beginPath();
+
+        // // this.ctx.setLineDash([7, 5]);
+        // this.ctx.moveTo(this.cfg.canvas.center.x ,this.cfg.canvas.center.y - this.cfg.canvas.height / 2 );
+        // this.ctx.lineTo(this.cfg.canvas.center.x, this.cfg.canvas.center.y + this.cfg.canvas.height / 2 + 30);
+        // this.ctx.moveTo(this.cfg.canvas.center.x - this.cfg.canvas.width / 2 ,this.cfg.canvas.center.y );
+        // this.ctx.lineTo(this.cfg.canvas.center.x + this.cfg.canvas.width / 2 + 30, this.cfg.canvas.center.y);
+        // this.ctx.stroke();
     };
 
     snk.fn.drawCountToStart = function(countDown){
         this.ctx.textAlign = 'left';
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '3.5rem Monospace';
-        if(this.data.gameSettings.gameCountDownToStart == 0 ){
-                
+        if(this.data.gameInterval.gameCountDownToStart == 0){
             this.ctx.fillText('GO!', this.cfg.canvas.center.x - 10, this.cfg.canvas.center.y - 20);
-        } else if (countDown == 'PAUSE'){
-            this.ctx.fillText(countDown, this.cfg.canvas.center.x - 35, this.cfg.canvas.center.y - 20);
-        }  else if (countDown == 'GAME OVER!'){
-            this.ctx.fillText(countDown, this.cfg.canvas.center.x - 65, this.cfg.canvas.center.y - 20);
-        }else {  
+        } else {  
             this.ctx.fillText(countDown, this.cfg.canvas.center.x, this.cfg.canvas.center.y - 20);
         }
-
-           
     };
 
     snk.fn.drawMenu = function(){
          
         this.ctx.fillStyle = this.cfg.ui.menu.color;
-        this.ctx.fillRect(this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2, this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2, this.cfg.ui.menu.width , this.cfg.ui.menu.height);
-            
+        this.ctx.fillRect(this.cfg.canvas.center.x - this.cfg.ui.menu.width / 2, this.cfg.canvas.center.y - this.cfg.ui.menu.height / 2, this.cfg.ui.menu.width , this.cfg.ui.menu.height);   
         this.ctx.textAlign = this.cfg.ui.menu.align;
-
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '2.6rem Monospace';
         if(this.menu.tree.length == 1){
-            this.ctx.fillText('S N A K E', this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
+            if(this.data.changes.gameStage == 'unstarted'){
+                this.ctx.fillText('S N A K E', this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
+            } else if (this.data.changes.gameStage == 'gameover'){
+                this.ctx.fillText(this.data.changes.gameStage.toUpperCase().split('').join(String.fromCharCode(8202)), this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
+                this.ctx.fillText('Score: ' + this.stats.score, this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + this.cfg.ui.menu.coordinates.y * 2 - 50);
+            } else {
+                this.ctx.fillText(this.data.changes.gameStage.toUpperCase().split('').join(String.fromCharCode(8202)), this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
+            }
+          
         } else {
             this.ctx.fillText(this.menu.tree[this.menu.tree.length-1].name.split('').join(String.fromCharCode(8202)), this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40); 
         }
@@ -129,7 +211,7 @@ var Snake = (function (root, snk){
        
     
         for(var i = 0; i < this.menu.lists.length ; i++){
-            // console.log(this.cfg.ui.menu.list);
+        
             var text = this.ctx.measureText(this.menu.lists[this.menu.index].name);
 
             // if(this.menu.selected !== 'none'){

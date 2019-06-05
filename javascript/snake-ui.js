@@ -12,7 +12,6 @@ var Snake = (function(snk){
                 }else if( this.menu.index > 0) {
                     this.menu.selected = false;
                     this.menu.index -= 1;
-                    console.log(this.menu);
                 }
                 break;
 
@@ -24,7 +23,6 @@ var Snake = (function(snk){
                 } else if(this.menu.index < this.menu.lists.length-1){
                     this.menu.selected = false;
                     this.menu.index += 1;
-                    console.log(this.menu);
                 }
                 break;
 
@@ -46,6 +44,7 @@ var Snake = (function(snk){
 
             case 'enter':
                 if(this.menu.selected === true){ 
+                    this.updateSettings();
                     this.menu.selected = false;
                 } else {
                     this.menu.choice = this.menu.lists[this.menu.index];
@@ -62,8 +61,12 @@ var Snake = (function(snk){
                         }
                     } else if(typeof this.menu.choice.change === 'object'){
                         this.menu.selected = true;
-                        console.log(this.menu);
                     }
+                }
+                if(this.data.changes.gameStage === 'gameover'){
+                    this.data.changes.gameStage = 'unstarted';
+                    this.menu.show = true;
+                    this.menu.index = 0;
                 }
                 break;
 
@@ -80,7 +83,6 @@ var Snake = (function(snk){
                     this.menu.selected = false;
                     this.menu.tree.pop();
                 }
-                console.log(this.menu);
                 break;   
 
             default: 
@@ -96,28 +98,19 @@ var Snake = (function(snk){
         var that = this;
         if(!this.menu.proto){
             this.menu.proto = {
-                showSettings: function(e) {
-                    var len = e.length;
-                    var i = 0;
-                    var j = 0;
-                    if(e){
-                        for(i; i < len; i++){
-                            if(e[i].subMenu !== false){
-                                for(j; j < e[i].subMenu.length; j++ ){
-                                    if(e[i].subMenu[j].default){
-                                        e[i].subMenu[j].name += ' ' + e[i].subMenu[j].default;
-                                    }
-                                    if(e[i].subMenu[j].subMenu !== false){
-                                        that.menu.proto.showSettings(e[i].subMenu);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
                 newGame: function(){
+                    if(that.data.changes.gameStage == 'unstarted' || that.data.changes.gameStage == 'pause' ) {
+                        that.newGame();
+
+                    } 
+                    // that.newGame();
                     console.log(that);
                     console.log('newGame');
+                    that.menu.lists[1].available = true;
+                },
+
+                continueGame: function(){
+                    that.gameStart();
                 },
 
                 backMenu: function(){
@@ -127,11 +120,13 @@ var Snake = (function(snk){
                 toggleSound: function(){
                     if(that.data.gameSettings.sound === 'on'){
                         that.data.gameSettings.sound = 'off';
+                        
                         that.menu.choice.name = 'Sound: ' + that.menu.lists[that.menu.index].change[1];
                     } else {
                         that.data.gameSettings.sound = 'on';
                         that.menu.choice.name = 'Sound: ' + that.menu.lists[that.menu.index].change[0];
                     }
+
                 },
 
                 changeVolume: function(e){
@@ -142,10 +137,11 @@ var Snake = (function(snk){
                 },
 
                 changeDifficulty: function(e){
-                    if(e == -1 && that.data.gameSettings.difficultyLevely !== that.menu.choice.change[0] || e == 1 && that.data.gameSettings.difficultyLevel !== that.menu.choice.change[that.menu.choice.change.length-1]){ //TODO: must change if
+                    if(e == -1 && that.data.gameSettings.difficulty !== that.menu.choice.change[0] || e == 1 && that.data.gameSettings.difficulty !== that.menu.choice.change[that.menu.choice.change.length-1]){ //TODO: must change if
                         that.menu.choice.choiceChange += e;
-                        that.data.gameSettings.difficultyLevel = that.menu.choice.change[that.menu.choice.choiceChange-1];
-                        that.menu.choice.name = 'Difficulty: ' + that.data.gameSettings.difficultyLevel;
+                        that.data.gameSettings.difficulty = that.menu.choice.change[that.menu.choice.choiceChange-1];
+                        that.difficultyLevelChanges(that.data.gameSettings.difficulty);
+                        that.menu.choice.name = 'Difficulty: ' + that.data.gameSettings.difficulty;
                     }
                 }
             };

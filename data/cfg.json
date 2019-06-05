@@ -144,13 +144,27 @@
                 },
                 {
                     "id": 4,
-                    "name": "Leaderboards",
+                    "name": "Scoreboard",
                     "subMenu": false,
-                    "function": "showLeaderBoards"
+                    "function": "showLeaderBoard"
                 }],
         
             "margin": 50,
             "align": "center"
+        },
+        "gameoverBoard": {
+            "align": "center",
+            "margin": 50,
+            "show": true,
+            "width": 500,
+            "height": 330,
+            "color": "#1d1d1d",
+            "paddingTop": 100,
+            "paddingLR": 70,
+            "rowWidth": null
+        },
+        "topScoreBar": {
+            "width": 30
         }
     },
     "snakeDetails": {
@@ -177,6 +191,8 @@
         "score": 0,
         "time": "00:00:00",
         "combo": 0,
+        "maxCombo": 0,
+        "total": 0,
         "snakeLife": 1
     } 
 }

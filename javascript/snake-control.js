@@ -4,16 +4,13 @@ var Snake = (function(snk){
     'use strict';
     
     snk.fn.control = function(e){
-        // console.log(this);
-        //  console.log(e.keyCode);
         var key = e.keyCode;
         var calc;
-        if (key == 32  && this.data.gameStatus == false) {
-            this.toggleGameStatus();
-            return;
-        } 
-        if (key == 32 || key === 27 && this.data.gameStatus == true) {       // snk.UI.toggleUi();
-            this.toggleGameStatus();
+        if (key == 32 || key === 27 ) { 
+            if(this.data.gameStatus == true ||  this.data.changes.gameStage == 'count') {
+                this.gameStop();
+                this.menu.show = true;
+            }    
             return;
         }
        
@@ -96,22 +93,6 @@ var Snake = (function(snk){
             }
 
         }
-
-
-
-        
-
-        // for test 
-        if(key == 107){
-            snk.changeVelocity(1);
-        } else if(key == 109) {
-            snk.changeVelocity(-1);
-        }
-
-
     };
-
-  
-   
     return snk;
 })(Snake || {});

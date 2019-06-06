@@ -191,9 +191,6 @@ var Snake = (function (root, snk){
         if(this.menu.tree.length == 1){
             if(this.data.changes.gameStage == 'unstarted'){
                 this.ctx.fillText('S N A K E', this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
-            } else if (this.data.changes.gameStage == 'gameover'){
-                this.ctx.fillText(this.data.changes.gameStage.toUpperCase().split('').join(String.fromCharCode(8202)), this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
-                this.ctx.fillText('Score: ' + this.stats.score, this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y + this.cfg.ui.menu.coordinates.y * 2 - 50);
             } else {
                 this.ctx.fillText(this.data.changes.gameStage.toUpperCase().split('').join(String.fromCharCode(8202)), this.cfg.canvas.center.x , this.cfg.ui.menu.coordinates.y - 40);
             }

@@ -111,7 +111,7 @@ var Snake = (function(root, snk){
                         m: 0,
                         s: 0
                     },
-                    gameStage: 'gameover',
+                    gameStage: 'unstarted',
                 },
                 gameInterval: {
                     gameCountDownToStart: 3,
@@ -121,6 +121,7 @@ var Snake = (function(root, snk){
                     myInerval: null,
                     interval: 10,
                     comboTimeInterval: null,
+                    totalScoreInterval: null
                 },
                 gameSettings: {}
             };
@@ -128,7 +129,7 @@ var Snake = (function(root, snk){
             this.menu = {
                 index: this.cfg.ui.menu.index,
                 lists: this.cfg.ui.menu.lists,
-                show: false,
+                show: true,
                 tree: [this.cfg.ui.menu.lists],
                 selected: false,
               
@@ -298,8 +299,9 @@ var Snake = (function(root, snk){
                     // snake.draw(snakeArry.holdPartsDraw,ctx, snakeDetails.width, snakeDetails.height, "black" ,snakeDetails.borderColor , snakeDetails.spaceBetweenParts);
                     this.drawStats();
                     this.stats.snakeLife = 0;
+                    
                     this.data.changes.gameStage = 'gameover';
-                  
+                    this.data.gameInterval.totalScoreInterval = setInterval(this.totalScore.bind(this), 5);
                 }
             }
             // map
@@ -310,6 +312,7 @@ var Snake = (function(root, snk){
                 this.drawStats();
                 this.stats.snakeLife = 0;
                 this.data.changes.gameStage = 'gameover';
+                this.data.gameInterval.totalScoreInterval = setInterval(this.totalScore.bind(this), 5);
                 
             }
             if(this.data.changes.gameStage =='gameover'){
@@ -417,7 +420,21 @@ var Snake = (function(root, snk){
             if(this.stats.maxCombo < this.stats.combo){
                 this.stats.maxCombo = this.stats.combo;
             }
-            this.stats.total = this.stats.score + this.stats.consumed * this.stats.maxCombo;
+        },
+
+        totalScore: function(){
+            if(this.stats.total > (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 10 && this.stats.total < (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 90){
+                this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 500);
+       
+            }else {
+                this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 1000);
+            }
+         
+            if(this.stats.total >= this.stats.score + this.stats.consumed * this.stats.maxCombo){
+                var resto = Math.ceil((this.stats.score + (this.stats.consumed * this.stats.maxCombo) + Math.floor((this.stats.consumed * this.stats.maxCombo / this.data.difficultyProp.comboTime))) /5) * 5;
+                this.stats.total = resto;
+                clearInterval(this.data.gameInterval.totalScoreInterval);
+            }
         },
 
         // set previous positions

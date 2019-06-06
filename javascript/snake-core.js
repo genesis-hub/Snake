@@ -3,7 +3,7 @@ var Snake = (function(root, snk){
     console.log('%cSNAKE GAME 🐍', 'color: green; font-size: 30px;', '@ Matthew');
     
     var CONFIG;
-    var cfgPath = '../data/cfg.json';
+    var cfgPath = 'https://api.myjson.com/bins/lzq8n';
 
     // var loadSettings;
     // add browser support
@@ -18,7 +18,7 @@ var Snake = (function(root, snk){
     var GameCreate = function(cfg){
         // get game config 
         this.cfg = JSON.parse(cfg);
-        // snk.localStorage.remove('settings');
+        //snk.localStorage.remove('settings');
         this.initGame();
         console.log(this);
         console.log('%cGame ready to start!', 'color: Green; font-size: 20px;');

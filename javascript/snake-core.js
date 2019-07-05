@@ -3,7 +3,7 @@ var Snake = (function(root, snk){
     console.log('%cSNAKE GAME 🐍', 'color: green; font-size: 30px;', '@ Matthew');
     
     var CONFIG;
-    var cfgPath = 'https://cdn.jsdelivr.net/gh/ressel-hub/Snake/data/cfg.json';
+    var cfgPath = 'https://cdn.jsdelivr.net/gh/ressel-hub/Snake/data/data.json';
 
     // var loadSettings;
     // add browser support

@@ -1,0 +1,205 @@
+{
+    "canvas": {
+        "id": "game_canvas",
+        "name": "Snake",
+        "width": 1000,
+        "height": 700
+    },
+    "gameStatusList": ["GO!", "PAUSE", "GAME OVER!"],
+    "ui": {
+        "menu": {
+            "index": 0,
+            "show": true,
+            "width": 300,
+            "height": 400,
+            "color": "#1d1d1d",
+            "coordinates": {
+                "x": 338,
+                "y": 188
+            },
+            "lists": 
+                 [{
+                    "id": 0,
+                    "name": "New Game",
+                    "subMenu": false,
+                    "available": true,
+                    "function": "newGame"
+                }, 
+                {
+                    "id": 1,
+                    "name": "Continue",
+                    "subMenu": false,
+                    "available": false,
+                    "function": "continueGame"
+                }, 
+                {   
+                    "id": 2,
+                    "name": "Guide",
+                    "subMenu": false,
+                    "available": false,
+                    "function": "showHistory"
+                }, {
+                    "id": 3,
+                    "name": "Options",
+                    "subMenu": [{
+                        "id": 0,
+                        "name": "Sound",
+                        "change": ["on", "off"],
+                        "default": "off",
+                        "available": false,
+                        "subMenu": false,
+                        "function": "toggleSound"
+                        
+                    },
+                    {
+                        "id": 1,
+                        "name": "Volume",
+                        "change": [50],
+                        "default": "50%",
+                        "subMenu": false,
+                        "available": false,
+                        "function": "changeVolume"
+                        
+                    },
+                    {
+                        "id": 2,
+                        "name": "Difficulty",
+                        "change": ["easy", "normal", "hard"],
+                        "default": "normal",
+                        "choiceChange": 2,
+                        "prop": {
+                            "easy": {
+                                "name": "easy",
+                                "comboTime": 8,
+                                "speed": 1
+                            },
+                            "normal": {
+                                "name": "normal",
+                                "comboTime": 5,
+                                "speed": 2
+                            },
+                            "hard": {
+                                "name": "hard",
+                                "comboTime": 3,
+                                "speed": 3
+                            }        
+                        },
+                        "subMenu": false,
+                        "function": "changeDifficulty"
+                        
+                    },
+                    {
+                        "id": 3,
+                        "name": "Keyboard",
+                        "subMenu": [
+                        {
+                            "id": 0,
+                            "name": "Accept",
+                            "change": ["enter", "spacebar"],
+                            "default": "enter",
+                            "subMenu": false,
+                            "available": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 3,
+                            "name": "Control",
+                            "change": ["arrows", "WASD"],
+                            "default": "arrows",
+                            "subMenu": false,
+                            "available": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 1,
+                            "name": "Back",
+                            "change": ["esc", "backspace"],
+                            "default": "backspace",
+                            "subMenu": false,
+                            "available": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Stop",
+                            "change": ["spacebar", "esc"],
+                            "default": "spacebar",
+                            "subMenu": false,
+                            "available": false,
+                            "function": "setKey"
+                        },
+                        {
+                            "id": 4,
+                            "name": "<--",
+                            "subMenu": false,
+                            "available": true,
+                            "function": "backMenu"
+                        }],
+                        "available": true,
+                        "function": false
+                    }, 
+                    {
+                        "id": 4,
+                        "name": "<--",
+                        "subMenu": false,
+                        "available": true,
+                        "function": "backMenu"
+                    }],
+                    "available": true,
+                    "function": false
+                },
+                {
+                    "id": 4,
+                    "name": "Scoreboard",
+                    "subMenu": false,
+                    "available": false,
+                    "function": "showLeaderBoard"
+                }],
+        
+            "margin": 50,
+            "align": "center"
+        },
+        "gameoverBoard": {
+            "align": "center",
+            "margin": 50,
+            "show": true,
+            "width": 500,
+            "height": 330,
+            "color": "#1d1d1d",
+            "paddingTop": 100,
+            "paddingLR": 70,
+            "rowWidth": null
+        },
+        "topScoreBar": {
+            "width": 30
+        }
+    },
+    "snakeDetails": {
+        "borderColor": "#1d1d1d",
+        "color": "#dedddd",
+        "width": 30,
+        "height": 30,
+        "length": 6,
+        "deathColor": "#000000",
+        "spaceBetweenParts": 6
+    },
+    "snakeFood": {
+        "width": 30,
+        "height": 30,
+        "color": "crimson",
+        "borderColor": "#101010"
+    },
+    "canvasMap": {
+        "borderWidth": 5,
+        "borderColor": "#cfcfcf"
+    },
+    "gameStats": {
+        "consumed": 0,
+        "score": 0,
+        "time": "00:00:00",
+        "combo": 0,
+        "maxCombo": 0,
+        "total": 0,
+        "snakeLife": 1
+    } 
+}

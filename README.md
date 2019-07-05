@@ -9,15 +9,12 @@
 git clone https://github.com/matthew-hub/Snake.git
 ```
 
-### Page:
-```github
-https://github.com/matthew-hub/Snake.git
-```
-![Screenshot](https://cdn.jsdelivr.net/gh/matthew-hub/Snake/images/screenshot/snake.jpg)
+#### Page: <https://matthew-hub.github.io/Snake/>
+---
+![SS](https://cdn.jsdelivr.net/gh/matthew-hub/Snake/images/screenshot/snake.jpg)
 
 ---
 
-###---
 
 ### License
 

@@ -3,7 +3,7 @@ var Snake = (function(root, snk){
     console.log('%cSNAKE GAME 🐍', 'color: green; font-size: 30px;', '@ Matthew');
     
     var CONFIG;
-    var cfgPath = 'https://api.myjson.com/bins/lzq8n';
+    var cfgPath = '../data/cfg.json';//'https://api.myjson.com/bins/lzq8n';
 
     // var loadSettings;
     // add browser support
@@ -18,7 +18,7 @@ var Snake = (function(root, snk){
     var GameCreate = function(cfg){
         // get game config 
         this.cfg = JSON.parse(cfg);
-        //snk.localStorage.remove('settings');
+        // snk.localStorage.remove('settings');
         this.initGame();
         console.log(this);
         console.log('%cGame ready to start!', 'color: Green; font-size: 20px;');
@@ -423,15 +423,34 @@ var Snake = (function(root, snk){
         },
 
         totalScore: function(){
-            if(this.stats.total > (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 10 && this.stats.total < (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 90){
-                this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 500);
+            // if(this.stats.total > (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 10 && this.stats.total < (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 90){
+            //     this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 500);
        
-            }else {
-                this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 1000);
+            // }else {
+            //     this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 1000);
+            // }
+         
+            // if(this.stats.total >= this.stats.score + this.stats.consumed * this.stats.maxCombo){
+            //     var resto = Math.ceil((this.stats.score + (this.stats.consumed * this.stats.maxCombo) + Math.floor((this.stats.consumed * this.stats.maxCombo / this.data.difficultyProp.comboTime))) /5) * 5;
+            //     this.stats.total = resto;
+            //     clearInterval(this.data.gameInterval.totalScoreInterval);
+            // }
+             if(this.stats.total > (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 10 && this.stats.total < (this.stats.score + this.stats.consumed * this.stats.maxCombo) / 100 * 90){
+                if((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 500 < 1){
+                    this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 5);
+                } else {
+                    this.stats.total +=  Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 500);
+                }
+            } else {
+                if((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 1000 < 1){
+                    this.stats.total += Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 10) ;
+                } else {
+                    this.stats.total += Math.round((this.stats.score + this.stats.consumed * this.stats.maxCombo) / 1000);
+                }
             }
          
-            if(this.stats.total >= this.stats.score + this.stats.consumed * this.stats.maxCombo){
-                var resto = Math.ceil((this.stats.score + (this.stats.consumed * this.stats.maxCombo) + Math.floor((this.stats.consumed * this.stats.maxCombo / this.data.difficultyProp.comboTime))) /5) * 5;
+            if(this.stats.total >= (this.stats.score + this.stats.consumed * this.stats.maxCombo)){
+                var resto = Math.ceil((this.stats.score + (this.stats.consumed * this.stats.maxCombo) + Math.floor((this.stats.consumed * this.stats.maxCombo / this.data.difficultyProp.comboTime))) / 5) * 5;
                 this.stats.total = resto;
                 clearInterval(this.data.gameInterval.totalScoreInterval);
             }

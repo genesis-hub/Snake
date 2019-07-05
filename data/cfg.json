@@ -36,7 +36,7 @@
                     "id": 2,
                     "name": "Guide",
                     "subMenu": false,
-                    "available": true,
+                    "available": false,
                     "function": "showHistory"
                 }, {
                     "id": 3,
@@ -45,7 +45,8 @@
                         "id": 0,
                         "name": "Sound",
                         "change": ["on", "off"],
-                        "default": "on",
+                        "default": "off",
+                        "available": false,
                         "subMenu": false,
                         "function": "toggleSound"
                         
@@ -56,6 +57,7 @@
                         "change": [50],
                         "default": "50%",
                         "subMenu": false,
+                        "available": false,
                         "function": "changeVolume"
                         
                     },
@@ -96,6 +98,7 @@
                             "change": ["enter", "spacebar"],
                             "default": "enter",
                             "subMenu": false,
+                            "available": false,
                             "function": "setKey"
                         },
                         {
@@ -104,6 +107,7 @@
                             "change": ["arrows", "WASD"],
                             "default": "arrows",
                             "subMenu": false,
+                            "available": false,
                             "function": "setKey"
                         },
                         {
@@ -112,6 +116,7 @@
                             "change": ["esc", "backspace"],
                             "default": "backspace",
                             "subMenu": false,
+                            "available": false,
                             "function": "setKey"
                         },
                         {
@@ -120,6 +125,7 @@
                             "change": ["spacebar", "esc"],
                             "default": "spacebar",
                             "subMenu": false,
+                            "available": false,
                             "function": "setKey"
                         },
                         {
@@ -146,6 +152,7 @@
                     "id": 4,
                     "name": "Scoreboard",
                     "subMenu": false,
+                    "available": false,
                     "function": "showLeaderBoard"
                 }],
         
